@@ -1,0 +1,15 @@
+servers:
+    pgAdminGC:
+        host: 35.188.88.232
+        database: cts
+        user: postgres
+        password: AJ2709lO3zdCLP09
+
+plotly:
+    pass1:
+        plotly_username_1: JoaoCarabetta
+        plotly_key_1: 90g6AIxoIAjQ3kV7N7nA
+    pass2:
+        plotly_username_2: joaocarabettafgv
+        plotly_key_2: 46AhR4PoX9Tu1ROZ8Yiz
+
