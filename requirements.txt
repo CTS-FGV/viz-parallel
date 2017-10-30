@@ -1,7 +1,8 @@
-RUN pip install dash==0.19.0
-RUN pip install dash-renderer==0.11.1
-RUN pip install dash-html-components==0.8.0
-RUN pip install dash-core-components==0.14.0
-RUN pip install plotly
-RUN pip install gunicorn
-RUN pip install pandas
+dash==0.19.0
+dash-renderer==0.11.1
+dash-html-components==0.8.0
+dash-core-components==0.14.0
+plotly
+gunicorn
+pandas
+sqlalchemy
