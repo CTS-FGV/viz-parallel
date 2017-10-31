@@ -1,0 +1,46 @@
+union_tramitadas:
+  query: |
+  DROP TABLE IF EXISTS viz_congresso_tramitacao.proposicoes_tramitacoes;
+CREATE TABLE viz_congresso_tramitacao.proposicoes_tramitacoes AS
+  SELECT
+      to_timestamp("dataHora", 'YYYY-MM-DD hh24:mi:ss')::timestamp without time zone dataHora,
+      "idProposicao",
+    url,
+    "idTipoTramitacao",
+    "descricaoTramitacao",
+    sequencia,
+    despacho,
+    regime,
+    "idSituacao",
+    "descricaoSituacao",
+    "idOrgao",
+    "siglaOrgao",
+    "uriOrgao",
+    data_captura
+    FROM br_camdep_v2.proposicoes_tramitacoes;
+CREATE INDEX proposicoes_tramitacoes_datahora_index ON viz_congresso_tramitacao.proposicoes_tramitacoes (datahora);
+CREATE INDEX proposicoes_tramitacoes_idproposicao_index ON viz_congresso_tramitacao.proposicoes_tramitacoes ("idProposicao");
+
+DROP TABLE IF EXISTS viz_congresso_tramitacao.proposicoes_tramitadas_periodo;
+CREATE TABLE viz_congresso_tramitacao.proposicoes_tramitadas_periodo AS
+SELECT
+  to_timestamp("dataAlteracao", 'DD/MM/YYYY hh24:mi:ss')::timestamp without time zone dataAlteracao,
+  "codProposicao",
+  numero,
+  ano,
+  "tipoProposicao",
+  to_timestamp("dataTramitacao", 'DD/MM/YYYY hh24:mi:ss')::timestamp without time zone datatramitacao,
+  data_captura
+ FROM br_camdep_v1.proposicoes_tramitadas_periodo;
+ CREATE INDEX proposicoes_tramitadas_periodo_dataalteracao_index ON viz_congresso_tramitacao.proposicoes_tramitadas_periodo (dataalteracao);
+CREATE INDEX proposicoes_tramitadas_periodo_codproposicao_index ON viz_congresso_tramitacao.proposicoes_tramitadas_periodo ("codProposicao");
+
+
+DROP TABLE IF EXISTS viz_congresso_tramitacao.proposicoes_tramitadas;
+CREATE TABLE viz_congresso_tramitacao.proposicoes_tramitadas AS
+SELECT v.*, w.datatramitacao
+FROM viz_congresso_tramitacao.proposicoes_tramitacoes v
+JOIN viz_congresso_tramitacao.proposicoes_tramitadas_periodo w
+  ON v."idProposicao" = w."codProposicao" AND v.datahora = w.dataalteracao
+  cron: 0 6 * * 1
+  descricao: Une as duas tabelas de tramitacao para obter o tempo certo

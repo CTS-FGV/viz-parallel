@@ -1,2 +1,4 @@
 *.pyc
+.idea
+__pyache__
 config.yml

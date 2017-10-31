@@ -85,5 +85,5 @@ def update_figure(selected_range):
     		}
 
 if __name__ == '__main__':
-	app.run_server()
+    app.run_server()
 
