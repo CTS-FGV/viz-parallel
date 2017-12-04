@@ -3,86 +3,52 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-import plotly.graph_objs as go
-import pandas as pd
 import flask
-import importlib
-import sqlalchemy
+from dash.dependencies import Input, Output
+import yaml
 
+from main_options.fluxo_tramitacao.callback import fluxo_tramitacao
+from main_options.perfil_tempo_tramitacao.callback import perfil_tempo_tramitacao
 
 ### CONFIG APP
 
 server = flask.Flask(__name__)
 app = dash.Dash(name='app1', sharing=True, server=server, csrf_protect=False)
 
+# CONSTANTS
+options_properties = yaml.load(open('main_options/options_properties.yaml', 'r'))
+options_functions = {'fluxo_tramitacao': fluxo_tramitacao,
+                     'perfil_tempo_tramitacao': perfil_tempo_tramitacao}
 
-### CONEXÃO POSTGRES
-
-utils = importlib.machinery.SourceFileLoader('utils','utils.py')
-utils = utils.load_module()
-
-con = utils.connect_sqlalchemy_GC()
-
-
-### IMPORTAÇÃO DOS DADOS
-
-df = pd.read_sql_query("""SELECT sigla_orgao, 
-        count(sigla_orgao) AS qtde_tramitacoes,
-        EXTRACT(YEAR FROM data_tramitacao) ano
-        FROM c_camdep.camdep_proposicoes_tramitacao
-        GROUP BY ano, sigla_orgao
-        ORDER BY ano, qtde_tramitacoes, sigla_orgao;""", con)
-
-df['ano'] = df['ano'].astype(int)
-
-
-### ESTRUTURA APP
+# ESTRUTURA APP
 
 app.layout = html.Div([
-	dcc.Graph(id='graph-with-slider'),
-	dcc.RangeSlider(
-        	id='year-range-slider',
-       		min=df['ano'].min(),
-        	max=df['ano'].max(),
-        	value=[df['ano'].unique()[-10], df['ano'].unique()[-1]],
-        	step=None,
-        	marks={str(year): str(year) for year in df['ano'].unique()}
-    	)
-	])
+    dcc.RadioItems(
+        id='xaxis-type',
+        options=[{'label': option['full_name'],
+                  'value': option['back_name']}
+                 for option in options_properties],
+        value=options_properties[0]['back_name'],
+        labelStyle={'display': 'inline-block'}
+    ),
+    html.Div([
+        dcc.Input(id='input-1', type='text', value='Montréal'),
+        dcc.Input(id='input-2', type='text', value='Canada'),
+        html.Div(id='output')
+        ]
+    ),
+])
 
-@app.callback(
-	dash.dependencies.Output('graph-with-slider', 'figure'),
-	[dash.dependencies.Input('year-range-slider', 'value')])
 
-def update_figure(selected_range):
+@app.callback(Output('output', 'children'),
+              [Input('input-1', 'value'),
+               Input('input-2', 'value'),
+               Input('xaxis-type', 'value')])
+def draw_plot_1(input1, input2, input3):
 
-	traces = []
-	for i in range(selected_range[0], selected_range[1]+1):
-		tram_anual = df[df.ano == i]
-		traces.append(
-			go.Scatter(
-				x=i,
-				y=tram_anual['qtde_tramitacoes'],
-				text=tram_anual['sigla_orgao'],
-				mode='markers',
-           		 	opacity=0.7,
-            			marker={
-                			'size': 15,
-                			'line': {'width': 0.5, 'color': 'white'}
-            			},
-            			name=i
-        		))
+    func = options_functions[input3]['draw_plot_1']
+    return func(input1, input2)
 
-	return {
-        	'data': traces,
-        	'layout': go.Layout(
-            		xaxis={'title': 'Ano'},
-            		yaxis={'title': 'Volume de tramitações'},
-            		margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
-            		legend={'x': 1, 'y': 1},
-            		hovermode='closest'
-        		)
-    		}
 
 if __name__ == '__main__':
     app.run_server()
