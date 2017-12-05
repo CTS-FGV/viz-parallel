@@ -1,4 +1,8 @@
 - full_name: 'Perfil das Tramitações'
   back_name: 'perfil_tempo_tramitacao'
+- full_name: 'Número de PLs apresentadas'
+  back_name: 'numero_pls_apresentadas'
 - full_name: 'Fluxo das tramitações'
   back_name: 'fluxo_tramitacao'
+- full_name: 'Acumulado de PLs apresentadas'
+  back_name: 'acumulado_pls_apresentadas'
