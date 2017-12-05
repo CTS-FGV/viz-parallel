@@ -29,6 +29,7 @@ options_functions = {'fluxo_tramitacao': fluxo_tramitacao,
                      'numero_pls_apresentadas': numero_pls_apresentadas,
                      'acumulado_pls_apresentadas': acumulado_pls_apresentadas
                      }
+columns=2
 
 app.config.supress_callback_exceptions = True
 
@@ -78,6 +79,9 @@ app.layout = html.Div([
     ]
 )
 
+def generate_ids(value, column):
+    return "{value}-{column}".format(value=value, column=column)
+
 @app.callback(Output('menu', 'children'),
               [Input('graph-selector', 'value')])
 def update_menu(input1):
@@ -87,12 +91,16 @@ def update_menu(input1):
     for opt in options_properties:
         if opt['back_name'] == input1:
             for variables in opt['variables']:
-                menus.append(dcc.Dropdown(
-                           id='{}'.format(variables),
-                           options=[{'label': i,
-                                     'value': i} for i in range(4)]
-                            )
+                    menus.append(
+                        html.Div([
+                            dcc.Dropdown(
+                                   id=generate_ids(variables, column),
+                                   options=[{'label': i,
+                                             'value': i} for i in range(4)],
+                                    className='six columns'
+                                    ) for column in range(columns)],
                         )
+                    )
     return menus
 
 
@@ -101,8 +109,10 @@ def update_menu(input1):
     [Input('graph-selector', 'value')])
 def display_controls(back_name):
     # create a unique output container for each pair of dyanmic controls
-    return html.H5(id=back_name, className='eight columns',
-                    style={'text-align': 'center'})
+    return html.Div(
+        [html.H5(id=generate_ids(back_name, column),
+                 className='six columns',
+                 style={'text-align': 'center'}) for column in range(columns)])
 
 
 def generate_output_callback(back_name):
@@ -117,17 +127,19 @@ def generate_output_callback(back_name):
 
 for back_name in [o['value'] for o in app.layout['graph-selector'].options]:
 
-    callback_input = []
-    for opt in options_properties:
-        if opt['back_name'] == back_name:
-            for variables in opt['variables']:
-                callback_input.append(Input(variables, 'value'))
+    for column in range(columns):
+        callback_input = []
+        for opt in options_properties:
+            if opt['back_name'] == back_name:
+                for variables in opt['variables']:
+                    callback_input.append(Input(generate_ids(variables, column),
+                                                'value'))
 
-    app.callback(
-        Output(back_name, 'children'),
-        callback_input)(
-        generate_output_callback(back_name)
-    )
+        app.callback(
+            Output(generate_ids(back_name, column), 'children'),
+            callback_input)(
+            generate_output_callback(back_name)
+        )
 
 #@app.callback(Output('output', 'children'),
 #              [Input('input-1', 'value'),
