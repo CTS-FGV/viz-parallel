@@ -30,7 +30,7 @@ options_functions = {'fluxo_tramitacao': fluxo_tramitacao,
                      'acumulado_pls_apresentadas': acumulado_pls_apresentadas
                      }
 
-
+app.config.supress_callback_exceptions = True
 
 # ESTRUTURA APP
 
@@ -49,36 +49,85 @@ app.layout = html.Div([
 
    html.Hr(),
 
-   html.Div([
-       dcc.Dropdown(
-           id='choice',
-           options=[{'label': variables,
-                     'value': [0,1]}])]
+    html.Div([
 
-            className='ten columns offset-by-one'
-        ),
+        html.Div([
 
-   html.Div(id='menu',
-            className='ten columns offset-by-one'
+            html.P('Selecione o gráfico a ser mostrado:'),
+            dcc.RadioItems(
+                id='graph-selector',
+                options=[{'label': option['full_name'],
+                          'value': option['back_name']}
+                         for option in options_properties],
+                value=options_properties[0]['back_name'],
+                labelStyle={'display': 'inline-block'}
+            )
+        ],
+            className='six columns'
         ),
+        ]
+    ),
+
+    html.Div(id='menu',
+        className='ten columns offset-by-one'
+    ),
+
+    html.Div(
+        id='output-container'
+    ),
     ]
 )
 
-@app.callback(Output('output', 'children'),
-              [Input('input-1', 'value')])
-def update_menu():
+@app.callback(Output('menu', 'children'),
+              [Input('graph-selector', 'value')])
+def update_menu(input1):
 
     menus = []
 
-    for variables in options_properties[0]['variables']:
+    for opt in options_properties:
+        if opt['back_name'] == input1:
+            for variables in opt['variables']:
+                menus.append(dcc.Dropdown(
+                           id='{}'.format(variables),
+                           options=[{'label': i,
+                                     'value': i} for i in range(4)]
+                            )
+                        )
+    return menus
 
-        menus.append(dcc.Dropdown(
-                   id='{}'.format(variables),
-                   options=[{'label': variables,
-                             'value': [0,1]}]
-                    )
-                )
 
+@app.callback(
+    Output('output-container', 'children'),
+    [Input('graph-selector', 'value')])
+def display_controls(back_name):
+    # create a unique output container for each pair of dyanmic controls
+    return html.H5(id=back_name, className='eight columns',
+                    style={'text-align': 'center'})
+
+
+def generate_output_callback(back_name):
+    def print_exit(*values):
+
+        print(values)
+
+        return """Essa é a opção que você clicou {}
+                E esse é o resultado {}""".format(back_name, values)
+
+    return print_exit
+
+for back_name in [o['value'] for o in app.layout['graph-selector'].options]:
+
+    callback_input = []
+    for opt in options_properties:
+        if opt['back_name'] == back_name:
+            for variables in opt['variables']:
+                callback_input.append(Input(variables, 'value'))
+
+    app.callback(
+        Output(back_name, 'children'),
+        callback_input)(
+        generate_output_callback(back_name)
+    )
 
 #@app.callback(Output('output', 'children'),
 #              [Input('input-1', 'value'),

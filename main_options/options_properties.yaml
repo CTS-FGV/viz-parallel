@@ -1,8 +1,16 @@
 - full_name: 'Perfil das Tramitações'
   back_name: 'perfil_tempo_tramitacao'
+  variables:
+       [p1, p2]
 - full_name: 'Número de PLs apresentadas'
   back_name: 'numero_pls_apresentadas'
+  variables:
+       [p3, p4, p5]
 - full_name: 'Fluxo das tramitações'
   back_name: 'fluxo_tramitacao'
+  variables:
+       [p6]
 - full_name: 'Acumulado de PLs apresentadas'
   back_name: 'acumulado_pls_apresentadas'
+  variables:
+       [p7, p8, p9, p10]
