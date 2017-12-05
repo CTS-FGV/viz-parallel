@@ -156,7 +156,7 @@ app.layout = html.Div([
             ),
             html.Div(
                 [
-                    dcc.Graph(id='plot-diff')
+                    dcc.Graph(id='plot_diff')
                 ],
                 className='six columns',
                 style={'margin-top': '40'}
