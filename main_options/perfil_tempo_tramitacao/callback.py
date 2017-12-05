@@ -1,4 +1,10 @@
-def draw_plot_1(input1, input2):
-    return u'Input 1 is "{}" and Input 2 is "{}"'.format(input1, input2)
+import pandas as pd
+
+raw_data = pd.read_csv('perfil_tramitacao.csv')
+
+
+
+def draw_plot_1(status, perido):
+
 
 perfil_tempo_tramitacao = {'draw_plot_1': draw_plot_1}
