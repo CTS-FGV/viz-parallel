@@ -6,17 +6,16 @@ import dash_html_components as html
 import flask
 from dash.dependencies import Input, Output
 import yaml
-#from flask import send_from_directory
-import os
+
 
 from main_options.fluxo_tramitacao.callback import fluxo_tramitacao
 from main_options.perfil_tempo_tramitacao.callback import perfil_tempo_tramitacao
 from main_options.numero_pls_apresentadas.callback import numero_pls_apresentadas
 from main_options.acumulado_pls_apresentadas.callback import acumulado_pls_apresentadas
 
+from components import components
 
-
-### CONFIG APP
+#  CONFIG APP
 
 server = flask.Flask(__name__)
 app = dash.Dash(name='app1', sharing=True, server=server, csrf_protect=False)
@@ -29,10 +28,11 @@ options_functions = {'fluxo_tramitacao': fluxo_tramitacao,
                      'numero_pls_apresentadas': numero_pls_apresentadas,
                      'acumulado_pls_apresentadas': acumulado_pls_apresentadas
                      }
+columns = 2
 
+app.config.supress_callback_exceptions = True
 
-
-# ESTRUTURA APP
+#  ESTRUTURA APP
 
 app.layout = html.Div([
 
@@ -49,133 +49,109 @@ app.layout = html.Div([
 
    html.Hr(),
 
-# (2) Seleção gráfico + instância
-   html.Div([
-
-           html.Div([
-
-               html.P('Selecione o gráfico a ser mostrado:'),
-               dcc.RadioItems(
-                   id='graph-selector',
-                   options=[{'label': option['full_name'],
-                             'value': option['back_name']}
-                            for option in options_properties],
-                   value=options_properties[0]['back_name'],
-                   labelStyle={'display': 'inline-block'}
-                    )
-                ],
-               className='six columns'
-           ),
-
-           html.Div([
-
-               html.P('Selecione a instância a ser comparada:'),
-               dcc.RadioItems(
-                   id='compare-selector',
-                   options=[{'label': option['full_name'],
-                             'value': option['back_name']}
-                            for option in options_properties],
-                   labelStyle={'display': 'inline-block'}
-                   )
-               ],
-               className='six columns'
-                )
-            ],
-            className='row'
-        ),
-
-    html.Hr(),
-
-# (3) Seleção da comparação
     html.Div([
 
-            html.P('Selecione os valores para comparação:',
-                   style={'margin-top': '20'})
+        html.Div([
 
-    ]),
-
-    html.Div([
-
-           html.Div([
-               dcc.Dropdown(
-                   id='compare-values',
-                   options=[{'label': option['full_name'],
-                             'value': option['back_name']}
-                            for option in options_properties]
-                    )
-                ],
-               className='four columns'
-           ),
-
-           html.Div([
-
-               dcc.Dropdown(
-                   id='xaxis-type',
-                   options=[{'label': option['full_name'],
-                             'value': option['back_name']}
-                            for option in options_properties]
-                    )
-                ],
-               className='four columns'
-                )
-            ],
-            className='row'
-        ),
-
-# (4) Gráficos
-    html.Div(
-        [
-            html.Div(
-                [
-                    dcc.Graph(id='plot_1')
-                ],
-                className='six columns',
-                style={'margin-top': '20'}
-            ),
-            html.Div(
-                [
-                    dcc.Graph(id='plot_2')
-                ],
-                className='six columns',
-                style={'margin-top': '20'}
-            ),
+            html.P('Selecione o gráfico a ser mostrado:'),
+            dcc.RadioItems(
+                id='graph-selector',
+                options=[{'label': option['full_name'],
+                          'value': option['back_name']}
+                         for option in options_properties],
+                value=options_properties[0]['back_name'],
+                labelStyle={'display': 'inline-block'}
+            )
         ],
-        className='row'
+            className='six columns'
+        ),
+        ]
+    ),
+
+    html.Div(id='menu',
+        className='ten columns offset-by-one'
     ),
 
     html.Div(
-        [
-            html.Div(
-                html.H5('Algo interessante para'
-                        'ser colocado aqui'
-                        ''
-                        '\n Um número bonito:'
-                        '\n 13718 coisas'),
-                className='three columns',
-                style={'margin-top': '40'}
-            ),
-            html.Div(
-                [
-                    dcc.Graph(id='plot-diff')
-                ],
-                className='six columns',
-                style={'margin-top': '40'}
-            ),
-            html.Div(
-                html.H5('Hnm... Muito interessante'
-                        ''
-                        '\n Outro número bonito: '
-                        '\n 1823 coisas'),
-                className='three columns',
-                style={'margin-top': '40'}
-            ),
-        ],
-        className='row'
+        id='output-container'
     ),
-
-],
-    className='ten columns offset-by-one'
+    ]
 )
+
+def generate_ids(value, column):
+    return "{value}-{column}".format(value=value, column=column)
+
+@app.callback(Output('menu', 'children'),
+              [Input('graph-selector', 'value')])
+def update_menu(back_name):
+
+    menus = []
+
+    for opt in options_properties:
+        if opt['back_name'] == back_name:
+            for variables in opt['variables']:
+                for column in range(columns):
+
+                    kwargs = dict(id=generate_ids(variables['data_title'], column),
+                                  className='five columns',
+                                  raw_data=options_functions[back_name]['raw_data'],
+                                  column_name=variables['column_name'],
+                                  back_name=back_name,
+                                  data_title=variables['data_title'],
+                                  extra_options=variables['options'])
+
+                    menus.append(components[variables['type']](kwargs=kwargs))
+    print(menus)
+    return menus
+
+
+
+
+@app.callback(
+    Output('output-container', 'children'),
+    [Input('graph-selector', 'value')])
+def display_controls(back_name):
+    # create a unique output container for each pair of dynamic controls
+    return html.Div(
+        [html.H5(id=generate_ids(back_name, column),
+                 className='six columns',
+                 style={'text-align': 'center'}) for column in range(columns)])
+
+
+def generate_output_callback(back_name):
+    def print_exit(*values):
+
+        print(values)
+
+        return """Essa é a opção que você clicou {}
+                E esse é o resultado {}""".format(back_name, values)
+
+    return print_exit
+
+for back_name in [o['value'] for o in app.layout['graph-selector'].options]:
+
+    for column in range(columns):
+        callback_input = []
+        for opt in options_properties:
+            if opt['back_name'] == back_name:
+                for variables in opt['variables']:
+                    callback_input.append(Input(generate_ids(variables['data_title'], column),
+                                                'value'))
+
+        app.callback(
+            Output(generate_ids(back_name, column), 'children'),
+            callback_input)(
+            generate_output_callback(back_name)
+        )
+
+#@app.callback(Output('output', 'children'),
+#              [Input('input-1', 'value'),
+#               Input('input-2', 'value'),
+#               Input('xaxis-type', 'value')])
+#def draw_plot_1(input1, input2, input3):
+#
+#    func = options_functions[input3]['draw_plot_1']
+#    return func(input1, input2)
 
 
 
