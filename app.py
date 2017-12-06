@@ -73,7 +73,8 @@ app.layout = html.Div([
     ),
 
     html.Div(
-        id='output-container'
+        id='output-container',
+        className='ten columns offset-by-one'
     ),
     ]
 )
@@ -105,17 +106,15 @@ def update_menu(back_name):
     return menus
 
 
-
-
 @app.callback(
     Output('output-container', 'children'),
     [Input('graph-selector', 'value')])
 def display_controls(back_name):
-    # create a unique output container for each pair of dynamic controls
+    # Create a unique output container for each pair of dynamic controls
     return html.Div(
-        [html.H5(id=generate_ids(back_name, column),
-                 className='six columns',
-                 style={'text-align': 'center'}) for column in range(columns)])
+        [dcc.Graph(id=generate_ids(back_name, column),
+                   className='six columns',
+                   style={'text-align': 'center'}) for column in range(columns)])
 
 
 def generate_output_callback(back_name):
@@ -123,8 +122,7 @@ def generate_output_callback(back_name):
 
         print(values)
 
-        return """Essa é a opção que você clicou {}
-                E esse é o resultado {}""".format(back_name, values)
+        return options_functions[back_name]['draw_plot_1'](values[0], values[1])
 
     return print_exit
 
@@ -139,7 +137,7 @@ for back_name in [o['value'] for o in app.layout['graph-selector'].options]:
                                                 'value'))
 
         app.callback(
-            Output(generate_ids(back_name, column), 'children'),
+            Output(generate_ids(back_name, column), 'figure'),
             callback_input)(
             generate_output_callback(back_name)
         )

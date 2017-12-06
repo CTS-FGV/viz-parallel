@@ -19,6 +19,7 @@ def dropdown(**kwargs):
     categories = methods.get_unique_categorical(raw_data[column_name])
 
     options = [{'label': i, 'value': i} for i in categories]
+    extra_options['value'] = categories[0]
 
 
     return dcc.Dropdown(

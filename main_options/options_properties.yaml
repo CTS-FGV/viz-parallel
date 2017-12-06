@@ -7,7 +7,7 @@
           options:
             multi: False
             clearable: False
-            placeholder: False
+            placeholder: 'Selecione um status'
             searchable: True
             value: None
         - column_name: 'dataInicio'
