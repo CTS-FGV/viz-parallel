@@ -1,8 +1,8 @@
 - full_name: 'Perfil das Tramitações'
   back_name: 'perfil_tempo_tramitacao'
   variables:
-        - column_name: 'tempo'
-          data_title: 'tempo'
+        - column_name: 'situacao_tipo'
+          data_title: 'Tipo da Situação'
           type: 'dropdown'
           options:
             multi: False
@@ -10,18 +10,19 @@
             placeholder: False
             searchable: True
             value: None
-        - column_name: 'tempo'
-          data_title: 'tempo2'
+        - column_name: 'dataInicio'
+          data_title: 'Intervalo de Tempo'
           type: 'range_slider'
           options:
+            aggregation: year
             allowcross: False
             dots: False
             count: 1
             included: False
             marks: ''
-            max: 10
-            min: -5
-            step: 0.5
+            max: None
+            min: None
+            step: None
             vertical: False
             value: [-3, 7]
 - full_name: 'Número de PLs apresentadas'

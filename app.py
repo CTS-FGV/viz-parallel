@@ -94,7 +94,7 @@ def update_menu(back_name):
 
                     kwargs = dict(id=generate_ids(variables['data_title'], column),
                                   className='five columns',
-                                  style={'margin-top': 20},
+                                  raw_data=options_functions[back_name]['raw_data'],
                                   column_name=variables['column_name'],
                                   back_name=back_name,
                                   data_title=variables['data_title'],

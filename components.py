@@ -1,23 +1,25 @@
 import dash_core_components as dcc
 import dash_html_components as html
+import methods
+
 
 def dropdown(**kwargs):
-
     kwargs = kwargs['kwargs']
 
     id = kwargs['id']
     className = kwargs['className']
+    raw_data = kwargs['raw_data']
     column_name = kwargs['column_name']
     back_name = kwargs['back_name']
     data_title = kwargs['data_title']
     extra_options = kwargs['extra_options']
 
+    #  Get categories
 
-    options = [
-        {'label': 'New York City', 'value': 'NYC'},
-        {'label': 'Montréal', 'value': 'MTL'},
-        {'label': 'San Francisco', 'value': 'SF'}
-    ]
+    categories = methods.get_unique_categorical(raw_data[column_name])
+
+    options = [{'label': i, 'value': i} for i in categories]
+
 
     return dcc.Dropdown(
         id=id,
@@ -30,17 +32,25 @@ def dropdown(**kwargs):
         value=extra_options['value'])
 
 
-
 def range_slider(**kwargs):
-
     kwargs = kwargs['kwargs']
 
     id = kwargs['id']
     className = kwargs['className']
+    raw_data = kwargs['raw_data']
     column_name = kwargs['column_name']
     back_name = kwargs['back_name']
     data_title = kwargs['data_title']
     extra_options = kwargs['extra_options']
+
+    interval = methods.get_max_min_time(series=raw_data[column_name],
+                             aggregation=extra_options['aggregation'])
+
+    extra_options['max'] = interval['max']
+    extra_options['min'] = interval['min']
+    extra_options['marks'] = [{i: str(i)} for i in range(interval['min'], interval['max']+1)]
+    extra_options['value'] = [interval['min'], interval['max']]
+    extra_options['step'] = 1
 
     return dcc.RangeSlider(
         id=id,
@@ -53,8 +63,7 @@ def range_slider(**kwargs):
         min=extra_options['min'],
         step=extra_options['step'],
         vertical=extra_options['vertical'],
-        value=extra_options['value'],)
-
+        value=extra_options['value'], )
 
 
 components = {'dropdown': dropdown,
