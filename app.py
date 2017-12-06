@@ -6,17 +6,16 @@ import dash_html_components as html
 import flask
 from dash.dependencies import Input, Output
 import yaml
-#from flask import send_from_directory
-import os
+
 
 from main_options.fluxo_tramitacao.callback import fluxo_tramitacao
 from main_options.perfil_tempo_tramitacao.callback import perfil_tempo_tramitacao
 from main_options.numero_pls_apresentadas.callback import numero_pls_apresentadas
 from main_options.acumulado_pls_apresentadas.callback import acumulado_pls_apresentadas
 
+from components import components
 
-
-### CONFIG APP
+#  CONFIG APP
 
 server = flask.Flask(__name__)
 app = dash.Dash(name='app1', sharing=True, server=server, csrf_protect=False)
@@ -29,11 +28,11 @@ options_functions = {'fluxo_tramitacao': fluxo_tramitacao,
                      'numero_pls_apresentadas': numero_pls_apresentadas,
                      'acumulado_pls_apresentadas': acumulado_pls_apresentadas
                      }
-columns=2
+columns = 2
 
 app.config.supress_callback_exceptions = True
 
-# ESTRUTURA APP
+#  ESTRUTURA APP
 
 app.layout = html.Div([
 
@@ -84,31 +83,35 @@ def generate_ids(value, column):
 
 @app.callback(Output('menu', 'children'),
               [Input('graph-selector', 'value')])
-def update_menu(input1):
+def update_menu(back_name):
 
     menus = []
 
     for opt in options_properties:
-        if opt['back_name'] == input1:
+        if opt['back_name'] == back_name:
             for variables in opt['variables']:
-                    menus.append(
-                        html.Div([
-                            dcc.Dropdown(
-                                   id=generate_ids(variables, column),
-                                   options=[{'label': i,
-                                             'value': i} for i in range(4)],
-                                    className='six columns'
-                                    ) for column in range(columns)],
-                        )
-                    )
+                for column in range(columns):
+
+                    kwargs = dict(id=generate_ids(variables['data_title'], column),
+                                  className='five columns',
+                                  style={'margin-top': 20},
+                                  column_name=variables['column_name'],
+                                  back_name=back_name,
+                                  data_title=variables['data_title'],
+                                  extra_options=variables['options'])
+
+                    menus.append(components[variables['type']](kwargs=kwargs))
+    print(menus)
     return menus
+
+
 
 
 @app.callback(
     Output('output-container', 'children'),
     [Input('graph-selector', 'value')])
 def display_controls(back_name):
-    # create a unique output container for each pair of dyanmic controls
+    # create a unique output container for each pair of dynamic controls
     return html.Div(
         [html.H5(id=generate_ids(back_name, column),
                  className='six columns',
@@ -132,7 +135,7 @@ for back_name in [o['value'] for o in app.layout['graph-selector'].options]:
         for opt in options_properties:
             if opt['back_name'] == back_name:
                 for variables in opt['variables']:
-                    callback_input.append(Input(generate_ids(variables, column),
+                    callback_input.append(Input(generate_ids(variables['data_title'], column),
                                                 'value'))
 
         app.callback(
