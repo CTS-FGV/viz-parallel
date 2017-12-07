@@ -2,24 +2,24 @@
   back_name: 'perfil_tempo_tramitacao'
   variables:
         - column_name: 'situacao_tipo'
-          data_title: 'Tipo da Situação'
+          data_title: 'tipo de situação (status)'
           type: 'dropdown'
           options:
             multi: False
             clearable: False
-            placeholder: 'Selecione um status'
+            placeholder: False
             searchable: True
             value: None
         - column_name: 'dataInicio'
-          data_title: 'Intervalo de Tempo'
+          data_title: 'intervalo de tempo'
           type: 'range_slider'
           options:
             aggregation: year
             allowcross: False
             dots: False
             count: 1
-            included: False
-            marks: ''
+            included: True
+            marks: None
             max: None
             min: None
             step: None

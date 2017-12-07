@@ -49,7 +49,7 @@ def range_slider(**kwargs):
 
     extra_options['max'] = interval['max']
     extra_options['min'] = interval['min']
-    extra_options['marks'] = [{i: str(i)} for i in range(interval['min'], interval['max']+1)]
+    extra_options['marks'] = {i: str(i) for i in range(interval['min'], interval['max']+1,2)}
     extra_options['value'] = [interval['min'], interval['max']]
     extra_options['step'] = 1
 
