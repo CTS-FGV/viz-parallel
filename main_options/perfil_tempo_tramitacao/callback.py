@@ -89,7 +89,9 @@ def prepare_data(raw_data, status=None, periodo=None):
 
     return temp
 
+# Passar para dentro de draw_plot_1
 def prepare_plot(raw_data, status, org, bins, periodo):
+
     temp = prepare_data(raw_data, status, periodo)
 
     x = bins

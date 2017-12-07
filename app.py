@@ -63,18 +63,22 @@ app.layout = html.Div([
                 labelStyle={'display': 'inline-block'}
             )
         ],
-            className='six columns'
+            className='twelve columns offset-by-one'
         ),
         ]
     ),
 
     html.Div(id='menu',
-        className='ten columns offset-by-one'
+        className='twelve columns offset-by-one'
     ),
+
+    html.Div([
+        html.Br()
+    ], className='twelve columns offset-by-one'),
 
     html.Div(
         id='output-container',
-        className='ten columns offset-by-one'
+        className='row'
     ),
     ]
 )
@@ -91,6 +95,11 @@ def update_menu(back_name):
     for opt in options_properties:
         if opt['back_name'] == back_name:
             for variables in opt['variables']:
+
+                menu_title = html.P('Selecione um(a) {}'.format(variables['data_title']))
+
+                menus.append(html.Div([html.Br(), html.Hr(), menu_title]))
+
                 for column in range(columns):
 
                     kwargs = dict(id=generate_ids(variables['data_title'], column),
@@ -101,7 +110,11 @@ def update_menu(back_name):
                                   data_title=variables['data_title'],
                                   extra_options=variables['options'])
 
+
                     menus.append(components[variables['type']](kwargs=kwargs))
+
+                    if column < (columns-1):
+                        menus.append(html.H5(className='one column'))
     print(menus)
     return menus
 
@@ -202,7 +215,7 @@ for back_name in [o['value'] for o in app.layout['graph-selector'].options]:
 #    func = options_functions[input3]['big_numbers_2']
 #    return func(input1, input2)
 
-app.css.append_css({"external_url": "https://codepen.io/chriddyp/pen/bWLwgP.css"})
+app.css.append_css({"external_url": "http://172.16.4.227:8000/stylesheet.css"})
 
 if __name__ == '__main__':
     app.run_server()
