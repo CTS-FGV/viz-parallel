@@ -100,33 +100,35 @@ def update_menu(back_name):
     for opt in options_properties:
         if opt['back_name'] == back_name:
 
-            i = 0
-            for variables in opt['variables']:
+            for column in range(columns):
 
-                menu_title = html.P('Selecione um(a) {}'.format(variables['menu_text']))
+                container=[]
 
-                # correcting menus positions
-                if i > 0:
-                    menus.append(html.Div([html.Br(), html.Br(), html.Hr(), menu_title]))
-                else:
-                    menus.append(html.Div([html.Hr(), menu_title]))
-                i += 1
+                i=0
+                for variables in opt['variables']:
 
-                for column in range(columns):
+                    menu_header = html.H3(opt['full_name'] + ' ' + str(column+1))
+                    menu_title = html.P('Selecione um(a) {}'.format(variables['menu_text']))
+
+                    if i == 0:
+                        container.append(html.Div([html.Br(), html.Hr(), menu_header, menu_title], className='ten columns offset-by-one'))
+                    else:
+                        container.append(html.Div([html.Br(), menu_title], className='ten columns offset-by-one'))
+
+                    i+=1
 
                     kwargs = dict(id=generate_ids(variables['data_title'], column),
-                                  className='five columns',
+                                  className='ten columns offset-by-one',
                                   raw_data=options_functions[back_name]['raw_data'],
                                   column_name=variables['column_name'],
                                   back_name=back_name,
                                   data_title=variables['data_title'],
                                   extra_options=variables['options'])
 
-                    menus.append(components[variables['type']](kwargs=kwargs))
+                    container.append(components[variables['type']](kwargs=kwargs))
 
-                    # add space between range_sliders
-                    if column < (columns - 1):
-                        menus.append(html.H5(className='one column'))
+                menus.append(html.Div(container, className='six columns'))
+
     return menus
 
 
