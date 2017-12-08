@@ -30,8 +30,8 @@ def dropdown(**kwargs):
         clearable=extra_options['clearable'],
         placeholder=extra_options['placeholder'],
         searchable=extra_options['searchable'],
-        value=extra_options['value'])
-
+        value=extra_options['value']
+    )
 
 def range_slider(**kwargs):
     kwargs = kwargs['kwargs']
@@ -64,7 +64,8 @@ def range_slider(**kwargs):
         min=extra_options['min'],
         step=extra_options['step'],
         vertical=extra_options['vertical'],
-        value=extra_options['value'], )
+        value=extra_options['value']
+    )
 
 
 components = {'dropdown': dropdown,
