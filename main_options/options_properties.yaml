@@ -2,7 +2,8 @@
   back_name: 'perfil_tempo_tramitacao'
   variables:
         - column_name: 'situacao_tipo'
-          data_title: 'tipo de situação (status)'
+          data_title: 'situacao-perfil'
+          menu_text: 'intervalo de tempo'
           type: 'dropdown'
           options:
             multi: False
@@ -11,7 +12,8 @@
             searchable: True
             value: None
         - column_name: 'dataInicio'
-          data_title: 'intervalo de tempo'
+          data_title: 'tempo-perfil'
+          menu_text: 'tipo de situação (status)'
           type: 'range_slider'
           options:
             aggregation: year
@@ -28,38 +30,22 @@
 - full_name: 'Número de PLs apresentadas'
   back_name: 'numero_pls_apresentadas'
   variables:
-        - column_name: 'tempo'
-          data_title: 'tempo3'
-          type: 'dropdown'
-          options:
-            multi: False
-            clearable: False
-            placeholder: False
-            searchable: True
-            value: None
-        - column_name: 'tempo'
-          data_title: 'tempo4'
+        - column_name: 'dataInicio'
+          data_title: 'tempo-numero'
+          menu_text: 'intervalo de tempo'
           type: 'range_slider'
           options:
+            aggregation: year
             allowcross: False
             dots: False
             count: 1
-            included: False
+            included: True
             marks: None
             max: 10
             min: -5
             step: 0.5
             vertical: False
             value: [-3, 7]
-        - column_name: 'tempo'
-          data_title: 'tempo75'
-          type: 'dropdown'
-          options:
-            multi: False
-            clearable: False
-            placeholder: False
-            searchable: True
-            value: None
 - full_name: 'Fluxo das tramitações'
   back_name: 'fluxo_tramitacao'
   variables:
@@ -79,7 +65,7 @@
             allowcross: False
             dots: False
             count: 1
-            included: False
+            included: True
             marks: None
             max: 10
             min: -5
@@ -105,7 +91,7 @@
             allowcross: False
             dots: False
             count: 1
-            included: False
+            included: True
             marks: None
             max: 10
             min: -5

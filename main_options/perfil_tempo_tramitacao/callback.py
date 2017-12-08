@@ -10,7 +10,11 @@ org = ['Administrativa', 'Comissões Temáticas',
 
 bins = np.linspace(0, 300, 31)
 
-def draw_plot_1(status, periodo):
+def draw_plot_1(input):
+
+    status=input['situacao-perfil']
+    periodo=input['tempo-perfil']
+
     return prepare_plot(raw_data, status, org, bins, periodo)
 
 
@@ -62,8 +66,8 @@ def prepare_data(raw_data, status=None, periodo=None):
     if status:
         df = raw_data[raw_data['situacao_tipo'] == status]
         df['dataInicio'] = pd.to_datetime(df['dataInicio'])
-        df = df[df['dataInicio'] > str(periodo[0])]
-        df = df[df['dataInicio'] < str(periodo[1])]
+        df = df[df['dataInicio'] >= str(periodo[0])]
+        df = df[df['dataInicio'] <= str(periodo[1])]
     else:
         df = raw_data
 
@@ -72,10 +76,9 @@ def prepare_data(raw_data, status=None, periodo=None):
     df1['Sum'] = df1.sum(1)
     df1 = df1.sort_values(by='Sum').reset_index()
 
-    org_sum = org + ['Sum']
 
-    print(org_sum)
-    print(df1.head())
+    org = list(df1)
+    org_sum = org[1:]
 
     a = df1.fillna(0)[org_sum]
     b = a.values
@@ -84,7 +87,7 @@ def prepare_data(raw_data, status=None, periodo=None):
     tempo_prep = pd.DataFrame(np.divide(b.T, s).T * 100, columns=org_sum)
     groups = tempo_prep.groupby(np.digitize(df1['Sum'], bins))
 
-    temp = groups.mean()[org]
+    temp = groups.mean()[org_sum[:-1]]
     temp = temp.fillna(0)
 
     return temp
