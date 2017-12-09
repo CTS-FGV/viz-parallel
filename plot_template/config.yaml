@@ -1,0 +1,34 @@
+full_name: 'Perfil das Tramitações'
+back_name: 'perfil_tempo_tramitacao'
+variables:
+      - column_name: 'situacao_tipo'
+        data_title: 'tipo de situação (status)'
+        type: 'dropdown'
+        options:
+          multi: False
+          clearable: False
+          placeholder: False
+          searchable: True
+          value: None
+      - column_name: 'dataInicio'
+        data_title: 'intervalo de tempo'
+        type: 'range_slider'
+        options:
+          aggregation: year
+          allowcross: False
+          dots: False
+          count: 1
+          included: True
+          marks: None
+          max: None
+          min: None
+          step: None
+          vertical: False
+          value: [-3, 7]
+infos:
+    - column_name: 'idProposicao'
+      data_title: 'Número de proposições'
+      type: 'count_unique'
+    - column_name: 'sequencia'
+      data_title: 'Média de mudança de status'
+      type: 'mean'
