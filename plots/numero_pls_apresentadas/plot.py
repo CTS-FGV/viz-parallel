@@ -1,16 +1,22 @@
 import pandas as pd
 import plotly.graph_objs as go
+from plots.numero_pls_apresentadas.get_raw_data import output
+import imp
 
-raw_data = pd.read_csv('main_options/numero_pls_apresentadas/numero_pls_apresentadas.csv')
+
 
 def draw_plot_1(input):
 
-    periodo=input['tempo-numero']
+    periodo = input['tempo-numero']
+
+    raw_data = imp.load_source('info', 'plots/numero_pls_apresentadas/get_raw_data.py').output['raw_data']
 
     raw_data['dataInicio'] = pd.to_datetime(raw_data['dataInicio'])
 
     df = raw_data[raw_data['dataInicio'] >= str(periodo[0])]
     df = df[df['dataInicio'] <= str(periodo[1])]
+
+    print(raw_data.columns)
 
     anos = df['dataInicio'].dt.year
     qtde = df['numero_pls']
@@ -38,14 +44,4 @@ def draw_plot_1(input):
 
     return figure
 
-
-def draw_plot_diff(input1, input2):
-    pass
-
-
-numero_pls_apresentadas = {"draw_plot_1": draw_plot_1,
-                           "draw_plot_diff": draw_plot_diff,
-                           "raw_data": raw_data
-                           # "big_numbers_1": big_numbers_1,
-                           # "big_numbers_2": big_numbers_2
-                           }
+output = {"plot": draw_plot_1}

@@ -27,6 +27,13 @@
             step: None
             vertical: False
             value: [-3, 7]
+  infos:
+      - column_name: 'idProposicao'
+        data_title: 'Número de proposições'
+        type: 'count_unique'
+      - column_name: 'sequencia'
+        data_title: 'Média de mudança de status'
+        type: 'mean'
 - full_name: 'Número de PLs apresentadas'
   back_name: 'numero_pls_apresentadas'
   variables:
