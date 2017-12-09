@@ -181,7 +181,7 @@ def generate_output_callback_graph(back_name):
                 for i, val in enumerate(opt['variables']):
                     inp[val['data_title']] = values[i]
         print(inp)
-        return options_functions[back_name]['plot'](inp)
+        return options_functions[back_name]['plot'](inp, options_functions[back_name]['raw_data'])
 
     return return_graph
 

@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objs as go
 
-raw_data = pd.read_csv('plots/perfil_tempo_tramitacao/perfil_tramitacao.csv')
+raw_data = imp.load_source('info', 'plots/perfil_tempo_tramitacao/get_raw_data.py').output['raw_data']
 
 org = ['Administrativa', 'Comissões Temáticas',
        'Congresso Nacional', 'Constituição e Justiça',
@@ -10,8 +10,9 @@ org = ['Administrativa', 'Comissões Temáticas',
 
 bins = np.linspace(0, 300, 31)
 
-def draw_plot_1(input):
-    print(input)
+def plot(input, raw_data):
+
+
     status=input['situacao-perfil']
     periodo=input['tempo-perfil']
 
@@ -125,8 +126,7 @@ def prepare_plot(raw_data, status, org, bins, periodo):
 
 
 
-output = {'plot': draw_plot_1,
-          'raw_data': raw_data}
+output = {'plot': plot}
 
 if __name__ == '__main__':
     pass

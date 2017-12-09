@@ -5,11 +5,11 @@ import imp
 
 
 
-def draw_plot_1(input):
+def draw_plot_1(input, raw_data):
 
     periodo = input['tempo-numero']
 
-    raw_data = imp.load_source('info', 'plots/numero_pls_apresentadas/get_raw_data.py').output['raw_data']
+    #raw_data = imp.load_source('info', 'plots/numero_pls_apresentadas/get_raw_data.py').output['raw_data']
 
     raw_data['dataInicio'] = pd.to_datetime(raw_data['dataInicio'])
 
