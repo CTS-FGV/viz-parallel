@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objs as go
 
-raw_data = pd.read_csv('main_options/perfil_tempo_tramitacao/perfil_tramitacao.csv')
+raw_data = pd.read_csv('plots/perfil_tempo_tramitacao/perfil_tramitacao.csv')
 
 def draw_plot_1(raw_data, status, periodo):
 

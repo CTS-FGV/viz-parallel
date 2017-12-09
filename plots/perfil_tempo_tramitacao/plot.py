@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objs as go
 
-raw_data = pd.read_csv('main_options/perfil_tempo_tramitacao/perfil_tramitacao.csv')
+raw_data = pd.read_csv('plots/perfil_tempo_tramitacao/perfil_tramitacao.csv')
 
 org = ['Administrativa', 'Comissões Temáticas',
        'Congresso Nacional', 'Constituição e Justiça',
@@ -72,19 +72,25 @@ def prepare_data(raw_data, status=None, periodo=None):
     df1['Sum'] = df1.sum(1)
     df1 = df1.sort_values(by='Sum').reset_index()
 
-    org_sum = org + ['Sum']
+    org_ext = list(set(list(df1.columns)).intersection(org))
+
+    org_sum = org_ext + ['Sum']
 
     print(org_sum)
     print(df1.head())
 
-    a = df1.fillna(0)[org_sum]
+    try:
+        a = df1.fillna(0)[org_sum]
+    except KeyError:
+        print(a.head)
+
     b = a.values
     s = a['Sum'].values
 
     tempo_prep = pd.DataFrame(np.divide(b.T, s).T * 100, columns=org_sum)
     groups = tempo_prep.groupby(np.digitize(df1['Sum'], bins))
 
-    temp = groups.mean()[org]
+    temp = groups.mean()[org_ext]
     temp = temp.fillna(0)
 
     return temp
@@ -115,8 +121,9 @@ def prepare_plot(raw_data, status, org, bins, periodo):
     return draw_plot(x, y, z, hm_col)
 
 
-perfil_tempo_tramitacao = {'draw_plot_1': draw_plot_1,
-                           'raw_data': raw_data}
+
+output = {'plot': draw_plot_1,
+          'raw_data': raw_data}
 
 if __name__ == '__main__':
     pass

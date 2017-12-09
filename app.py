@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 import dash
 import dash_core_components as dcc
@@ -6,48 +5,51 @@ import dash_html_components as html
 import flask
 from dash.dependencies import Input, Output
 import yaml
-
-
-from main_options.fluxo_tramitacao.callback import fluxo_tramitacao
-from main_options.perfil_tempo_tramitacao.callback import perfil_tempo_tramitacao
-from main_options.numero_pls_apresentadas.callback import numero_pls_apresentadas
-from main_options.acumulado_pls_apresentadas.callback import acumulado_pls_apresentadas
+import glob
+from collections import defaultdict
+import imp
 
 from components import components
 
-#  CONFIG APP
 
+#  CONFIG APP
 server = flask.Flask(__name__)
 app = dash.Dash(name='app1', sharing=True, server=server, csrf_protect=False)
 
-
 # CONSTANTS
-options_properties = yaml.load(open('main_options/options_properties.yaml', 'r'))
-options_functions = {'fluxo_tramitacao': fluxo_tramitacao,
-                     'perfil_tempo_tramitacao': perfil_tempo_tramitacao,
-                     'numero_pls_apresentadas': numero_pls_apresentadas,
-                     'acumulado_pls_apresentadas': acumulado_pls_apresentadas
-                     }
+plots_properties = [yaml.load(open(path, 'r')) for path in glob.glob('plots/*/config.yaml')]
+
+options_functions = defaultdict(lambda: dict())
+
+def add_functions(path, keyword, opt):
+    for base_path in glob.glob(path):
+        base_name = base_path.split('/')[1]
+        opt[base_name][keyword] = imp.load_source('info', base_path).output[keyword]
+    return opt
+
+options_functions = add_functions('plots/*/infos.py', 'infos', options_functions)
+options_functions = add_functions('plots/*/plot.py', 'plot', options_functions)
+options_functions = add_functions('plots/*/get_raw_data.py', 'raw_data', options_functions)
+
 columns = 2
 
 app.config.supress_callback_exceptions = True
 
 #  ESTRUTURA APP
-
 app.layout = html.Div([
 
-# (1) Título
-   html.Div([
+    # (1) Título
+    html.Div([
 
-               html.H1('Estrutura de tramitações',
-                       style={'margin-top': '10',
-                              'margin-bottom': '-5'})
+        html.H1('Estrutura de tramitações',
+                style={'margin-top':    '10',
+                       'margin-bottom': '-5'})
 
-       ],
-       className='row'
-   ),
+    ],
+            className='row'
+    ),
 
-   html.Hr(),
+    html.Hr(),
 
     html.Div([
 
@@ -55,44 +57,50 @@ app.layout = html.Div([
 
             html.P('Selecione o gráfico a ser mostrado:'),
             dcc.RadioItems(
-                id='graph-selector',
-                options=[{'label': option['full_name'],
-                          'value': option['back_name']}
-                         for option in options_properties],
-                value=options_properties[0]['back_name'],
-                labelStyle={'display': 'inline-block'}
+                    id='graph-selector',
+                    options=[{'label': option['full_name'],
+                              'value': option['back_name']}
+                             for option in plots_properties],
+                    value=plots_properties[3]['back_name'],
+                    labelStyle={'display': 'inline-block'}
             )
         ],
-            className='twelve columns offset-by-one'
+                className='twelve columns offset-by-one'
         ),
-        ]
+    ]
     ),
 
     html.Div(id='menu',
-        className='twelve columns offset-by-one'
-    ),
+             className='twelve columns offset-by-one'
+             ),
 
     html.Div([
         html.Br()
     ], className='twelve columns offset-by-one'),
 
     html.Div(
-        id='output-container',
-        className='row'
+            id='output-container',
+            className='row'
     ),
-    ]
+]
 )
 
-def generate_ids(value, column):
-    return "{value}-{column}".format(value=value, column=column)
+# General Functions
+def generate_ids(value, col, func):
+    return "{value}-{column}-{function}".format(value=value, column=col, function=func)
 
+
+def get_back_name_properties(back_name, properties):
+    return [dic for dic in properties if dic['back_name'] == back_name][0]
+
+
+# Create Menus
 @app.callback(Output('menu', 'children'),
               [Input('graph-selector', 'value')])
 def update_menu(back_name):
-
     menus = []
 
-    for opt in options_properties:
+    for opt in plots_properties:
         if opt['back_name'] == back_name:
             for variables in opt['variables']:
 
@@ -102,7 +110,7 @@ def update_menu(back_name):
 
                 for column in range(columns):
 
-                    kwargs = dict(id=generate_ids(variables['data_title'], column),
+                    kwargs = dict(id=generate_ids(variables['data_title'], column, 'menu'),
                                   className='five columns',
                                   raw_data=options_functions[back_name]['raw_data'],
                                   column_name=variables['column_name'],
@@ -110,113 +118,96 @@ def update_menu(back_name):
                                   data_title=variables['data_title'],
                                   extra_options=variables['options'])
 
-
                     menus.append(components[variables['type']](kwargs=kwargs))
 
-                    if column < (columns-1):
+                    if column < (columns - 1):
                         menus.append(html.H5(className='one column'))
-    print(menus)
     return menus
 
 
+# Create Output Containers
 @app.callback(
-    Output('output-container', 'children'),
-    [Input('graph-selector', 'value')])
+        Output('output-container', 'children'),
+        [Input('graph-selector', 'value')])
 def display_controls(back_name):
     # Create a unique output container for each pair of dynamic controls
-    return html.Div(
-        [dcc.Graph(id=generate_ids(back_name, column),
-                   className='six columns',
-                   style={'text-align': 'center'}) for column in range(columns)])
+    graphs = html.Div(
+            [dcc.Graph(id=generate_ids(back_name, column, 'graph'),
+                       className='six columns',
+                       style={'text-align': 'center'}) for column in range(columns)])
+
+    space = html.Div([
+        html.Br()
+    ], className='twelve columns offset-by-one')
+
+    info = html.Div(
+            [html.Div(
+                    id=generate_ids(back_name, column, 'info'),
+                    className='six columns',
+                    style={'text-align': 'center', 'background': 'black'})
+                for column in range(columns)])
+
+    return [graphs, space, info, space]
 
 
-def generate_output_callback(back_name):
-    def print_exit(*values):
+# Call Graph Function
+def generate_output_callback_graph(back_name):
+    def return_graph(*values):
+        return options_functions[back_name]['plot'](values[0], values[1])
 
-        print(values)
+    return return_graph
 
-        return options_functions[back_name]['draw_plot_1'](values[0], values[1])
 
-    return print_exit
+# Call Info Function
+def generate_output_callback_info(back_name):
+    def return_info(*values):
+
+        input = dict()
+
+        for opt in plots_properties:
+            if opt['back_name'] == back_name:
+
+                for i, val in enumerate(opt['variables']):
+                    input[val['data_title']] = values[i]
+
+        return None
+
+            #infos['generate_infos'](infos=get_back_name_properties(back_name,
+            #                                                    options_properties)['infos'],
+            #                           input=input,
+            #                           raw_data=options_functions[back_name]['raw_data'])
+
+    return return_info
+
 
 for back_name in [o['value'] for o in app.layout['graph-selector'].options]:
 
     for column in range(columns):
         callback_input = []
-        for opt in options_properties:
+        for opt in plots_properties:
             if opt['back_name'] == back_name:
                 for variables in opt['variables']:
-                    callback_input.append(Input(generate_ids(variables['data_title'], column),
+                    callback_input.append(Input(generate_ids(variables['data_title'],
+                                                             column,
+                                                             'menu'),
                                                 'value'))
 
         app.callback(
-            Output(generate_ids(back_name, column), 'figure'),
-            callback_input)(
-            generate_output_callback(back_name)
+                Output(
+                        generate_ids(back_name, column, 'graph'), 'figure'),
+                callback_input)(
+                generate_output_callback_graph(back_name)
         )
 
-#@app.callback(Output('output', 'children'),
-#              [Input('input-1', 'value'),
-#               Input('input-2', 'value'),
-#               Input('xaxis-type', 'value')])
-#def draw_plot_1(input1, input2, input3):
-#
-#    func = options_functions[input3]['draw_plot_1']
-#    return func(input1, input2)
+        app.callback(
+                Output(
+                        generate_ids(back_name, column, 'info'), 'figure'),
+                callback_input)(
+                generate_output_callback_info(back_name)
+        )
 
 
-
-#@app.callback(Output('output', 'children'),
-#              [Input('input-1', 'value'),
-#               Input('input-2', 'value'),
-#               Input('xaxis-type', 'value')])
-#def draw_plot_1(input1, input2, input3):
-#
-#    func = options_functions[input3]['draw_plot_1']
-#    return func(input1, input2)
-#
-#
-#@app.callback(Output('output', 'children'),
-#              [Input('input-1', 'value'),
-#               Input('input-2', 'value'),
-#               Input('xaxis-type', 'value')])
-#def draw_plot_2(input1, input2, input3):
-#
-#    func = options_functions[input3]['draw_plot_1']
-#    return func(input1, input2)
-#
-#
-#@app.callback(Output('output', 'children'),
-#              [Input('input-1', 'value'),
-#               Input('input-2', 'value'),
-#               Input('xaxis-type', 'value')])
-#def draw_plot_diff(input1, input2, input3):
-#
-#    func = options_functions[input3]['draw_plot_diff']
-#    return func(input1, input2)
-#
-#
-#@app.callback(Output('output', 'children'),
-#              [Input('input-1', 'value'),
-#               Input('input-2', 'value'),
-#               Input('xaxis-type', 'value')])
-#def big_numbers_1(input1, input2, input3):
-#
-#    func = options_functions[input3]['big_numbers_1']
-#    return func(input1, input2)
-#
-#
-#@app.callback(Output('output', 'children'),
-#              [Input('input-1', 'value'),
-#               Input('input-2', 'value'),
-#               Input('xaxis-type', 'value')])
-#def big_numbers_2(input1, input2, input3):
-#
-#    func = options_functions[input3]['big_numbers_2']
-#    return func(input1, input2)
-
-app.css.append_css({"external_url": "http://172.16.4.227:8000/stylesheet.css"})
+app.css.append_css({"external_url": "https://codepen.io/JoaoCarabetta/pen/RjzpPB.css"})
 
 if __name__ == '__main__':
     app.run_server()
-
