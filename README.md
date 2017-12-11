@@ -63,7 +63,7 @@ Let's go through the steps.
 
 - You can just copy the template to the plots folder, but you have to
 choose a *plot name* that have to be unique.
-`copy plot_template plots/<plot-name>`
+`cp -r plot_template plots/<plot-name>`
 
 - Now, you have to edit the `config.yaml`. There you will set the
 plot name and the variables that you want controlled. Currently,
