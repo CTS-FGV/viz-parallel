@@ -1,2 +1,4 @@
-output = {'infos': 'olá',
-          }
+def infos(a, b):
+    pass
+
+output = {'infos': infos}

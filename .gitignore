@@ -3,3 +3,4 @@
 __pyache__
 config.yml
 *.csv
+*.ipynb

@@ -11,6 +11,7 @@ from collections import defaultdict
 import imp
 
 from components import components
+from methods import wrap_infos
 
 #  CONFIG APP
 server = flask.Flask(__name__)
@@ -131,7 +132,7 @@ def update_menu(back_name):
                     i += 1
 
                     kwargs = dict(id=generate_ids(variables['data_title'], column, 'menu'),
-                                  className='five columns',
+                                  className='ten columns offset-by-one',
                                   raw_data=options_functions[back_name]['raw_data'],
                                   column_name=variables['column_name'],
                                   back_name=back_name,
@@ -164,7 +165,7 @@ def display_controls(back_name):
             [html.Div(
                     id=generate_ids(back_name, column, 'info'),
                     className='six columns',
-                    style={'text-align': 'center', 'background': 'black'})
+                    style={'text-align': 'center'})
                 for column in range(columns)])
 
     return [graphs, space, info, space]
@@ -180,7 +181,7 @@ def generate_output_callback_graph(back_name):
             if opt['back_name'] == back_name:
                 for i, val in enumerate(opt['variables']):
                     inp[val['data_title']] = values[i]
-        print(inp)
+
         return options_functions[back_name]['plot'](inp, options_functions[back_name]['raw_data'])
 
     return return_graph
@@ -198,12 +199,9 @@ def generate_output_callback_info(back_name):
                 for i, val in enumerate(opt['variables']):
                     inp[val['data_title']] = values[i]
 
-        return None
+        infos = options_functions[back_name]['infos'](inp, options_functions[back_name]['raw_data'])
 
-        # infos['generate_infos'](infos=get_back_name_properties(back_name,
-        #                                                    options_properties)['infos'],
-        #                           input=input,
-        #                           raw_data=options_functions[back_name]['raw_data'])
+        return wrap_infos(infos)
 
     return return_info
 
@@ -222,15 +220,15 @@ for back_name in [o['value'] for o in app.layout['graph-selector'].options]:
 
         app.callback(
                 Output(
-                        generate_ids(back_name, column, 'graph'), 'figure'),
-                callback_input)(
+                    generate_ids(back_name, column, 'graph'), 'figure'),
+                    callback_input)(
                 generate_output_callback_graph(back_name)
         )
 
         app.callback(
                 Output(
-                        generate_ids(back_name, column, 'info'), 'figure'),
-                callback_input)(
+                    generate_ids(back_name, column, 'info'), 'children'),
+                    callback_input)(
                 generate_output_callback_info(back_name)
         )
 
