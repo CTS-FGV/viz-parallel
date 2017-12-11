@@ -92,6 +92,13 @@ you have to pass a list of dicts.
 If it does not work, check out the terminal.
 
 
+## Contributing
+
+You are more than welcome to contribute. Just fork this repo and drop
+a pull request!
+
+You can also raise an issue with questions, bugs, enhancements, etc.
+
 ## Authors
 - João Carabetta
 - Fernanda Scovino
