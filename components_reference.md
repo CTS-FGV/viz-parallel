@@ -6,14 +6,14 @@ https://plot.ly/dash/dash-core-components/dropdown
 
 ```
    - column_name: 'tempo'
-          data_title: 'tempo'
-          type: 'dropdown'
-          options:
-            multi: False
-            clearable: False
-            placeholder: False
-            searchable: True
-            value: None
+      data_title: 'tempo'
+      type: 'dropdown'
+      options:
+        multi: False
+        clearable: False
+        placeholder: False
+        searchable: True
+        value: None
 ```
 
 ### Range Slider

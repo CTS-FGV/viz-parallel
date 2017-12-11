@@ -10,13 +10,13 @@ org = ['Administrativa', 'Comissões Temáticas',
 
 bins = np.linspace(0, 300, 31)
 
-def plot(input, raw_data):
+def plot(input, raw_data, filtered_data):
 
 
     status=input['situacao-perfil']
     periodo=input['tempo-perfil']
 
-    return prepare_plot(raw_data, status, org, bins, periodo)
+    return prepare_plot(raw_data, filtered_data, status, org, bins, periodo)
 
 
 def draw_plot(x, y, z, hm_col):
@@ -63,12 +63,15 @@ def draw_plot(x, y, z, hm_col):
     figure = dict(data=trace, layout=layout)
     return figure
 
-def prepare_data(raw_data, status=None, periodo=None):
+def prepare_data(raw_data, filtered_data, status=None, periodo=None):
     if status:
-        df = raw_data[raw_data['situacao_tipo'] == status]
-        df['dataInicio'] = pd.to_datetime(df['dataInicio'])
-        df = df[df['dataInicio'] >= str(periodo[0])]
-        df = df[df['dataInicio'] <= str(periodo[1])]
+        #df = raw_data[raw_data['situacao_tipo'] == status]
+        #df['dataInicio'] = pd.to_datetime(df['dataInicio'])
+        #df = df[df['dataInicio'] >= str(periodo[0])]
+        #df = df[df['dataInicio'] <= str(periodo[1])]
+        df = filtered_data
+        print('FILTEDER!!!!!!')
+        print(filtered_data)
     else:
         df = raw_data
 
@@ -82,10 +85,9 @@ def prepare_data(raw_data, status=None, periodo=None):
 
     org_sum = org_ext + ['Sum']
 
-    try:
-        a = df1.fillna(0)[org_sum]
-    except KeyError:
-        print(a.head)
+
+    a = df1.fillna(0)[org_sum]
+
 
     b = a.values
     s = a['Sum'].values
@@ -100,9 +102,9 @@ def prepare_data(raw_data, status=None, periodo=None):
     return temp
 
 # Passar para dentro de draw_plot_1
-def prepare_plot(raw_data, status, org, bins, periodo):
+def prepare_plot(raw_data, filtered_data, status, org, bins, periodo):
 
-    temp = prepare_data(raw_data, status, periodo)
+    temp = prepare_data(raw_data, filtered_data, status, periodo)
 
     x = bins
     y = org

@@ -5,16 +5,16 @@ import imp
 
 
 
-def draw_plot_1(input, raw_data):
+def draw_plot_1(input, raw_data, filtered_data):
 
     periodo = input['tempo-numero']
 
-    raw_data['dataInicio'] = pd.to_datetime(raw_data['dataInicio'])
+    #raw_data['dataInicio'] = pd.to_datetime(raw_data['dataInicio'])
 
-    df = raw_data[raw_data['dataInicio'] >= str(periodo[0])]
-    df = df[df['dataInicio'] <= str(periodo[1])]
+    #df = raw_data[raw_data['dataInicio'] >= str(periodo[0])]
+    #df = df[df['dataInicio'] <= str(periodo[1])]
 
-    print(raw_data.columns)
+    df = filtered_data
 
     anos = df['dataInicio'].dt.year
     qtde = df['numero_pls']

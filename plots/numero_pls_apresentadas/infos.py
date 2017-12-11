@@ -4,7 +4,9 @@ import pandas as pd
 raw_data = output['raw_data']
 
 
-def infos(callback_input: dict, raw_data: pd.DataFrame) -> list:
+def infos(callback_input: dict,
+          raw_data: pd.DataFrame,
+          filtered_data: pd.DataFrame) -> list:
     """
     Receives the callback input and return a list of dicts.
 
@@ -24,15 +26,15 @@ def infos(callback_input: dict, raw_data: pd.DataFrame) -> list:
 
     periodo = callback_input['tempo-numero']
 
-    print(type(raw_data['dataInicio']))
 
     #raw_data['dataInicio'] = pd.to_datetime(raw_data['dataInicio'])
 
-    filter_data= raw_data[raw_data['dataInicio'] >= str(periodo[0])]
-    filter_data = filter_data[filter_data['dataInicio'] <= str(periodo[1])]
+    #filter_data= raw_data[raw_data['dataInicio'] >= str(periodo[0])]
+    #filter_data = filter_data[filter_data['dataInicio'] <= str(periodo[1])]
 
-    mean = {'name': 'Média: ', 'value': round(filter_data['numero_pls'].mean(), 2)}
-    median = {'name': 'Mediana: ', 'value': round(filter_data['numero_pls'].median(), 2)}
+
+    mean = {'name': 'Média: ', 'value': round(filtered_data['numero_pls'].mean(), 2)}
+    median = {'name': 'Mediana: ', 'value': round(filtered_data['numero_pls'].median(), 2)}
 
     return [mean, median]
 
