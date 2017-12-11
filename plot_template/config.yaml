@@ -1,20 +1,22 @@
-full_name: 'Perfil das Tramitações'
-back_name: 'perfil_tempo_tramitacao'
+full_name: 'Congress Laws Paths              '  # Pretty name that will appear at the front-end
+back_name: 'perfil_tempo_tramitacao'            # Uggly and unique name. The same name used on this folder
 variables:
-      - column_name: 'situacao_tipo'
-        data_title: 'tipo de situação (status)'
-        type: 'dropdown'
-        options:
-          multi: False
+      - type: 'dropdown'                        # Dropdown component
+        column_name: 'situacao_tipo'            # Column associated with this data
+        data_title: 'status-perfil'             # Ugly and unique name for this data
+        menu_text: 'status'                     # Pretty name that will appear at the front-end
+        options:                                # Some options, see components_reference.md to understand it better
+          multi: True
           clearable: False
           placeholder: False
           searchable: True
           value: None
-      - column_name: 'dataInicio'
-        data_title: 'intervalo de tempo'
-        type: 'range_slider'
-        options:
-          aggregation: year
+      - type: 'range_slider'                    # Dropdown component
+        column_name: 'dataInicio'               # Column associated with this data
+        data_title: 'time-perfil'               # Ugly and unique name for this data
+        menu_text: 'time interval'              # Pretty name that will appear at the front-end
+        options:                                # Some option, see components_reference.md to understand it better
+          aggregation: year                     # Aggregation time. It currently supports: [year]
           allowcross: False
           dots: False
           count: 1
@@ -25,10 +27,3 @@ variables:
           step: None
           vertical: False
           value: [-3, 7]
-infos:
-    - column_name: 'idProposicao'
-      data_title: 'Número de proposições'
-      type: 'count_unique'
-    - column_name: 'sequencia'
-      data_title: 'Média de mudança de status'
-      type: 'mean'
