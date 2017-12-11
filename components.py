@@ -103,7 +103,6 @@ class Range_slider(object):
         except:
             pass
 
-
         filtered_data = raw_data[raw_data[column_name] >= str(filter_by[0])]
         filtered_data = filtered_data[filtered_data[column_name] <= str(filter_by[1])]
 

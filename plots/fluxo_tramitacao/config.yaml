@@ -1,10 +1,10 @@
-full_name: 'Congress Laws Paths              '  # Pretty name that will appear at the front-end
-back_name: 'perfil_tempo_tramitacao'            # Uggly and unique name. The same name used on this folder
+full_name: 'Fluxo Tramitação '                  # Pretty name that will appear at the front-end
+back_name: 'fluxo_tramitacao'                   # Uggly and unique name. The same name used on this folder
 variables:
       - type: 'dropdown'                        # Dropdown component
-        column_name: 'situacao_tipo'            # Column associated with this data
-        data_title: 'status-perfil'             # Ugly and unique name for this data
-        menu_text: 'status'                     # Pretty name that will appear at the front-end
+        column_name: 'orgao'            # Column associated with this data
+        data_title: 'organ'             # Ugly and unique name for this data
+        menu_text: 'orgão'                     # Pretty name that will appear at the front-end
         options:                                # Some options, see components_reference.md to understand it better
           multi: True
           clearable: False
@@ -12,9 +12,9 @@ variables:
           searchable: True
           value: None
       - type: 'range_slider'                    # Dropdown component
-        column_name: 'dataInicio'               # Column associated with this data
-        data_title: 'time-perfil'               # Ugly and unique name for this data
-        menu_text: 'time interval'              # Pretty name that will appear at the front-end
+        column_name: 'meses'               # Column associated with this data
+        data_title: 'time-interval'               # Ugly and unique name for this data
+        menu_text: 'anos'              # Pretty name that will appear at the front-end
         options:                                # Some option, see components_reference.md to understand it better
           aggregation: year                     # Aggregation time. It currently supports: [year]
           allowcross: False

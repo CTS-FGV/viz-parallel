@@ -5,15 +5,16 @@ Components Reference
 https://plot.ly/dash/dash-core-components/dropdown
 
 ```
-   - column_name: 'tempo'
-      data_title: 'tempo'
-      type: 'dropdown'
-      options:
-        multi: False
-        clearable: False
-        placeholder: False
-        searchable: True
-        value: None
+  - type: 'dropdown'
+    column_name: 'situacao_tipo'
+    data_title: 'situacao-perfil'
+    menu_text: 'intervalo de tempo'
+    options:
+      multi: False
+      clearable: False
+      placeholder: False
+      searchable: True
+      value: None
 ```
 
 ### Range Slider
@@ -21,18 +22,20 @@ https://plot.ly/dash/dash-core-components/dropdown
 https://plot.ly/dash/dash-core-components/rangeslider
 
 ```
-   - column_name: 'tempo'
-          data_title: 'tempo2'
-          type: 'range_slider'
-          options:
-            allowcross: False
-            dots: False
-            count: 1
-            included: False
-            marks: ''
-            max: 10
-            min: -5
-            step: 0.5
-            vertical: False
-            value: [-3, 7]
+  - type: 'range_slider'
+    column_name: 'dataInicio'
+    data_title: 'tempo-numero'
+    menu_text: 'intervalo de tempo'
+    options:
+      aggregation: year
+      allowcross: False
+      dots: False
+      count: 1
+      included: True
+      marks: None
+      max: 10
+      min: -5
+      step: 0.5
+      vertical: False
+      value: [-3, 7]
 ```

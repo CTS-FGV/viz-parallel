@@ -21,6 +21,43 @@ def plot(callback_input: dict, raw_data: pd.DataFrame, filtered_data: pd.DataFra
     :return: Plotly Figure
     """
 
+    select_organ = filtered_data
+
+    colors = ['#0E0F3E', '#3A3B77', '#E4CC18', '#F2B905', '#EFB104']
+
+    data = []
+
+    data.append(go.Scatter(
+       x=select_organ['meses'],
+       y=select_organ['diff'],
+       mode='lines',
+       name='Entrada-Saida',
+       marker=dict(color=colors[0])
+    ))
+
+    data.append(go.Scatter(
+            x=select_organ['meses'],
+            y=select_organ['entrada'],
+            mode='lines',
+            name='Entrada',
+            marker=dict(color=colors[2])
+    ))
+
+    data.append(go.Scatter(
+            x=select_organ['meses'],
+            y=select_organ['saida'],
+            mode='lines',
+            name='Saida',
+            marker=dict(color='#1f77b4')
+    ))
+
+    layout = dict(title='Fluxo de PLs p.d. na Plenário por Mês',
+                  yaxis=dict(title='Número de Tramitações'),
+                  xaxis=dict(title='Anos')
+                  )
+
+    figure = dict(data=data, layout=layout)
+
     return figure
 
 # Do not change this

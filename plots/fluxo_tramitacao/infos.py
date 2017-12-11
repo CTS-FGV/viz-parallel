@@ -19,9 +19,12 @@ def infos(callback_input: dict, raw_data: pd.DataFrame, filtered_data: pd.DataFr
     :return: list of dicts
     """
 
+    proposicoes =  {'name': 'Número de PLs tramitadas: ', 'value': filtered_data['saida'].sum()}
+    mean_entrada = {'name': 'Média de Entrada: ', 'value': round(filtered_data['entrada'].mean(), 2)}
+    mean_saida = {'name': 'Média de Saída: ', 'value': round(filtered_data['saida'].mean(), 2)}
+    mean_diff = {'name': 'Média da Diferença: ', 'value': round(filtered_data['diff'].mean(), 2)}
 
-
-    return
+    return [proposicoes, mean_entrada, mean_saida, mean_diff]
 
 # Do not change this line
 output = {'infos': infos}

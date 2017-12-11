@@ -3,17 +3,17 @@ back_name: 'perfil_tempo_tramitacao'
 variables:
       - column_name: 'situacao_tipo'
         data_title: 'situacao-perfil'
-        menu_text: 'intervalo de tempo'
+        menu_text: 'tipo de situação (status)'
         type: 'dropdown'
         options:
-          multi: False
+          multi: True
           clearable: False
           placeholder: False
           searchable: True
           value: None
       - column_name: 'dataInicio'
         data_title: 'tempo-perfil'
-        menu_text: 'tipo de situação (status)'
+        menu_text: 'intervalo de tempo'
         type: 'range_slider'
         options:
           aggregation: year

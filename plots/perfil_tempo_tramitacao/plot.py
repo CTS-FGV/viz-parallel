@@ -6,15 +6,14 @@ raw_data = imp.load_source('info', 'plots/perfil_tempo_tramitacao/get_raw_data.p
 
 org = ['Administrativa', 'Comissões Temáticas',
        'Congresso Nacional', 'Constituição e Justiça',
-       'Mesa','Plenário','Temporárias','Tributação e Finanças']
+       'Mesa', 'Plenário', 'Temporárias', 'Tributação e Finanças']
 
 bins = np.linspace(0, 300, 31)
 
+
 def plot(input, raw_data, filtered_data):
-
-
-    status=input['situacao-perfil']
-    periodo=input['tempo-perfil']
+    status = input['situacao-perfil']
+    periodo = input['tempo-perfil']
 
     return prepare_plot(raw_data, filtered_data, status, org, bins, periodo)
 
@@ -23,8 +22,8 @@ def draw_plot(x, y, z, hm_col):
     trace = [go.Heatmap(z=z,
                         y=y,
                         x=x,
-                        #text=hovertext,
-                        #hoverinfo='text',
+                        # text=hovertext,
+                        # hoverinfo='text',
                         colorscale=[
 
                             [0, hm_col[6]],
@@ -57,18 +56,19 @@ def draw_plot(x, y, z, hm_col):
                         showscale=True)]
 
     layout = dict(
-        margin=dict(l=150, r=50, b=50, t=100, pad=4),
-        xaxis=dict(title='Tempo de tramitação na Câmara (meses)'))
+            margin=dict(l=150, r=50, b=50, t=100, pad=4),
+            xaxis=dict(title='Tempo de tramitação na Câmara (meses)'))
 
     figure = dict(data=trace, layout=layout)
     return figure
 
+
 def prepare_data(raw_data, filtered_data, status=None, periodo=None):
     if status:
-        #df = raw_data[raw_data['situacao_tipo'] == status]
-        #df['dataInicio'] = pd.to_datetime(df['dataInicio'])
-        #df = df[df['dataInicio'] >= str(periodo[0])]
-        #df = df[df['dataInicio'] <= str(periodo[1])]
+        # df = raw_data[raw_data['situacao_tipo'] == status]
+        # df['dataInicio'] = pd.to_datetime(df['dataInicio'])
+        # df = df[df['dataInicio'] >= str(periodo[0])]
+        # df = df[df['dataInicio'] <= str(periodo[1])]
         df = filtered_data
         print('FILTEDER!!!!!!')
         print(filtered_data)
@@ -80,14 +80,11 @@ def prepare_data(raw_data, filtered_data, status=None, periodo=None):
     df1['Sum'] = df1.sum(1)
     df1 = df1.sort_values(by='Sum').reset_index()
 
-
     org_ext = list(set(list(df1.columns)).intersection(org))
 
     org_sum = org_ext + ['Sum']
 
-
     a = df1.fillna(0)[org_sum]
-
 
     b = a.values
     s = a['Sum'].values
@@ -101,17 +98,17 @@ def prepare_data(raw_data, filtered_data, status=None, periodo=None):
 
     return temp
 
+
 # Passar para dentro de draw_plot_1
 def prepare_plot(raw_data, filtered_data, status, org, bins, periodo):
-
     temp = prepare_data(raw_data, filtered_data, status, periodo)
 
     x = bins
     y = org
     z = temp.values.T
 
-    #hovertext = list()
-    #for yi, yy in enumerate(y):
+    # hovertext = list()
+    # for yi, yy in enumerate(y):
     #    hovertext.append(list())
     #    for xi, xx in enumerate(x):
     #        if xi < len(z1[yi]):
@@ -125,7 +122,6 @@ def prepare_plot(raw_data, filtered_data, status, org, bins, periodo):
     hm_col = ['#450A5C', '#423C81', '#34608C', '#2583A5', '#61B7C7', '#75D2DA', '#C1E1EA']
 
     return draw_plot(x, y, z, hm_col)
-
 
 
 output = {'plot': plot}

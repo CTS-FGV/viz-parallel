@@ -6,7 +6,7 @@ the data is comming from, just that in the end it has to be a Pandas DataFrame.
 """
 
 # From CSV
-# raw_data = pd.read_csv('plots/<plot-name>/<csv-name>.csv')
+raw_data = pd.read_csv('plots/fluxo_tramitacao/fluxo_tramitacoes.csv')
 
 # From SQL
 # import sqlalchemy

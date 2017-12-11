@@ -8,6 +8,7 @@ import yaml
 
 import glob
 from collections import defaultdict
+# noinspection PyDeprecation
 import imp
 
 from components import components
@@ -19,14 +20,15 @@ app = dash.Dash(name='app1', sharing=True, server=server, csrf_protect=False)
 
 # CONSTANTS
 options_properties = [yaml.load(open(path, 'r')) for path in glob.glob('plots/*/config.yaml')]
-options_functions = defaultdict(lambda: dict())
 
-print(options_properties)
+# BUILD OPTIONS FUNCTIONS
+options_functions = defaultdict(lambda: dict())
 
 
 def add_functions(path, keyword, opt):
     for base_path in glob.glob(path):
         base_name = base_path.split('/')[1]
+        # noinspection PyDeprecation
         opt[base_name][keyword] = imp.load_source('info', base_path).output[keyword]
     return opt
 
@@ -35,11 +37,13 @@ options_functions = add_functions('plots/*/infos.py', 'infos', options_functions
 options_functions = add_functions('plots/*/plot.py', 'plot', options_functions)
 options_functions = add_functions('plots/*/get_raw_data.py', 'raw_data', options_functions)
 
+# Set the number of columns
 columns = 2
 
+# Config needed to do complex callbacks
 app.config.supress_callback_exceptions = True
 
-#  ESTRUTURA APP
+#  App Layout
 app.layout = html.Div([
     # title
     html.Div([
@@ -104,6 +108,18 @@ def generate_ids(value, col, func):
 
 def get_back_name_properties(back_name):
     return [dic for dic in options_properties if dic['back_name'] == back_name][0]
+
+
+def filter_data(back_name, callback_input):
+    options = get_back_name_properties(back_name)['variables']
+
+    filtered_data = options_functions[back_name]['raw_data']
+
+    for variables in options:
+        filtered_data = components[variables['type']].filter(callback_input=callback_input,
+                                                             extra_options=variables,
+                                                             raw_data=filtered_data)
+    return filtered_data
 
 
 # Create Menus
@@ -172,19 +188,6 @@ def display_controls(back_name):
     return [graphs, space, info, space]
 
 
-
-def filter_data(back_name, callback_input):
-
-    options = get_back_name_properties(back_name)['variables']
-
-    filtered_data = options_functions[back_name]['raw_data']
-
-    for variables in options:
-        filtered_data = components[variables['type']].filter(callback_input=callback_input,
-                                                             extra_options=variables,
-                                                             raw_data=filtered_data)
-    return filtered_data
-
 # Call Graph Function
 def generate_output_callback_graph(back_name):
     def return_graph(*values):
@@ -222,7 +225,7 @@ def generate_output_callback_info(back_name):
 
     return return_info
 
-
+# Set callbacks from menu
 for back_name in [o['value'] for o in app.layout['graph-selector'].options]:
 
     for column in range(columns):
@@ -249,6 +252,7 @@ for back_name in [o['value'] for o in app.layout['graph-selector'].options]:
                 generate_output_callback_info(back_name)
         )
 
+# Append css
 app.css.append_css({"external_url": "https://codepen.io/JoaoCarabetta/pen/RjzpPB.css"})
 
 if __name__ == '__main__':

@@ -36,16 +36,13 @@ def get_max_min_time(series: object, aggregation: str) -> dict:
 
 # Infos H5 Wrap
 def wrap_infos(infos: dict) -> object:
-
     wrap = []
 
     try:
         for info in infos:
-
             wrap.append(html.H5('{name}{value}'.format(name=info['name'],
-                                                   value=info['value'])))
+                                                       value=info['value'])))
     except TypeError:
         print('No info given')
 
     return wrap
-
