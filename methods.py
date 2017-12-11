@@ -39,10 +39,13 @@ def wrap_infos(infos: dict) -> object:
 
     wrap = []
 
-    for info in infos:
+    try:
+        for info in infos:
 
-        wrap.append(html.H5('{name}{value}'.format(name=info['name'],
+            wrap.append(html.H5('{name}{value}'.format(name=info['name'],
                                                    value=info['value'])))
+    except TypeError:
+        print('No info given')
 
     return wrap
 

@@ -21,6 +21,8 @@ app = dash.Dash(name='app1', sharing=True, server=server, csrf_protect=False)
 options_properties = [yaml.load(open(path, 'r')) for path in glob.glob('plots/*/config.yaml')]
 options_functions = defaultdict(lambda: dict())
 
+print(options_properties)
+
 
 def add_functions(path, keyword, opt):
     for base_path in glob.glob(path):
@@ -67,7 +69,7 @@ app.layout = html.Div([
                     options=[{'label': option['full_name'],
                               'value': option['back_name']}
                              for option in options_properties],
-                    value=options_properties[3]['back_name'],
+                    value=options_properties[0]['back_name'],
                     labelStyle={'display': 'inline-block'}
             )
         ],
@@ -100,8 +102,8 @@ def generate_ids(value, col, func):
     return "{value}-{column}-{function}".format(value=value, column=col, function=func)
 
 
-def get_back_name_properties(back_name, properties):
-    return [dic for dic in properties if dic['back_name'] == back_name][0]
+def get_back_name_properties(back_name):
+    return [dic for dic in options_properties if dic['back_name'] == back_name][0]
 
 
 # Create Menus
@@ -112,7 +114,6 @@ def update_menu(back_name):
 
     for opt in options_properties:
         if opt['back_name'] == back_name:
-
             for column in range(columns):
 
                 container = []
@@ -139,7 +140,7 @@ def update_menu(back_name):
                                   data_title=variables['data_title'],
                                   extra_options=variables['options'])
 
-                    container.append(components[variables['type']](kwargs=kwargs))
+                    container.append(components[variables['type']].component(kwargs=kwargs))
 
                 menus.append(html.Div(container, className='six columns'))
 
@@ -171,6 +172,19 @@ def display_controls(back_name):
     return [graphs, space, info, space]
 
 
+
+def filter_data(back_name, callback_input):
+
+    options = get_back_name_properties(back_name)['variables']
+
+    filtered_data = options_functions[back_name]['raw_data']
+
+    for variables in options:
+        filtered_data = components[variables['type']].filter(callback_input=callback_input,
+                                                             extra_options=variables,
+                                                             raw_data=filtered_data)
+    return filtered_data
+
 # Call Graph Function
 def generate_output_callback_graph(back_name):
     def return_graph(*values):
@@ -182,7 +196,9 @@ def generate_output_callback_graph(back_name):
                 for i, val in enumerate(opt['variables']):
                     inp[val['data_title']] = values[i]
 
-        return options_functions[back_name]['plot'](inp, options_functions[back_name]['raw_data'])
+        return options_functions[back_name]['plot'](inp,
+                                                    options_functions[back_name]['raw_data'],
+                                                    filter_data(back_name, inp))
 
     return return_graph
 
@@ -195,11 +211,12 @@ def generate_output_callback_info(back_name):
 
         for opt in options_properties:
             if opt['back_name'] == back_name:
-
                 for i, val in enumerate(opt['variables']):
                     inp[val['data_title']] = values[i]
 
-        infos = options_functions[back_name]['infos'](inp, options_functions[back_name]['raw_data'])
+        infos = options_functions[back_name]['infos'](inp,
+                                                      options_functions[back_name]['raw_data'],
+                                                      filter_data(back_name, inp))
 
         return wrap_infos(infos)
 
@@ -220,15 +237,15 @@ for back_name in [o['value'] for o in app.layout['graph-selector'].options]:
 
         app.callback(
                 Output(
-                    generate_ids(back_name, column, 'graph'), 'figure'),
-                    callback_input)(
+                        generate_ids(back_name, column, 'graph'), 'figure'),
+                callback_input)(
                 generate_output_callback_graph(back_name)
         )
 
         app.callback(
                 Output(
-                    generate_ids(back_name, column, 'info'), 'children'),
-                    callback_input)(
+                        generate_ids(back_name, column, 'info'), 'children'),
+                callback_input)(
                 generate_output_callback_info(back_name)
         )
 
