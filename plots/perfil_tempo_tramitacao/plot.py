@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import plotly.graph_objs as go
+import imp
 
 raw_data = imp.load_source('info', 'plots/perfil_tempo_tramitacao/get_raw_data.py').output['raw_data']
 
