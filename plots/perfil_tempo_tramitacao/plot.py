@@ -5,9 +5,11 @@ import imp
 
 raw_data = imp.load_source('info', 'plots/perfil_tempo_tramitacao/get_raw_data.py').output['raw_data']
 
-org = ['Administrativa', 'Comissões Temáticas',
-       'Congresso Nacional', 'Constituição e Justiça',
-       'Mesa', 'Plenário', 'Temporárias', 'Tributação e Finanças']
+#org = ['Administrativa', 'Comissões Temáticas', 'Constituição e Justiça',
+#       'Mesa', 'Plenário', 'Temporárias', 'Tributação e Finanças']
+
+org = ['Administrativa', 'Comissões Temáticas', 'Temporárias',
+       'Constituição e Justiça', 'Tributação e Finanças', 'Mesa', 'Plenário']
 
 bins = np.linspace(0, 300, 31)
 
@@ -72,7 +74,7 @@ def prepare_data(raw_data, filtered_data, status=None, periodo=None):
         # df = df[df['dataInicio'] <= str(periodo[1])]
         df = filtered_data
         print('FILTEDER!!!!!!')
-        print(filtered_data)
+        #print(filtered_data)
     else:
         df = raw_data
 
@@ -81,7 +83,10 @@ def prepare_data(raw_data, filtered_data, status=None, periodo=None):
     df1['Sum'] = df1.sum(1)
     df1 = df1.sort_values(by='Sum').reset_index()
 
-    org_ext = list(set(list(df1.columns)).intersection(org))
+    org_data = set(list(df1.columns))
+    org_int = org_data.intersection(org)
+    org_ext = list(org_int)
+
 
     org_sum = org_ext + ['Sum']
 
@@ -105,8 +110,10 @@ def prepare_plot(raw_data, filtered_data, status, org, bins, periodo):
     temp = prepare_data(raw_data, filtered_data, status, periodo)
 
     x = bins
-    y = org
+    y = temp.columns.values
     z = temp.values.T
+
+    #print(list(temp.columns.values))
 
     # hovertext = list()
     # for yi, yy in enumerate(y):
