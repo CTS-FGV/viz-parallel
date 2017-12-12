@@ -15,7 +15,7 @@ def draw_plot_1(input, raw_data, filtered_data):
     df = filtered_data
 
     anos = df['dataInicio'].dt.year
-    qtde = df['numero_pls']
+    qtde = df['index']
 
     trace = [go.Bar(
             y=qtde,

@@ -48,14 +48,31 @@ app.layout = html.Div([
     # title
     html.Div([
 
-        html.H1('Estrutura de tramitações',
-                style={'margin-top':    '10',
-                       'margin-bottom': '-5',
-                       'text-align':    'center'})
+        html.H1('Tramitações em Números',
+                style={'margin-top': -10,
+                       'margin-left': -10,
+                       'margin-right': -10,
+                       'padding': 40,
+                       'height': 70,
+                       #'margin-bottom': '-5',
+                       'text-align': 'center',
+                       'background': 'teal',
+                       'color': 'white'})
 
     ],
             className='row'
     ),
+
+    html.Div([
+        html.Div([
+            html.P('Tramitações em Números é uma ferramenta de visualização '
+               'de dados da Câmara dos Deputados, elaborada pela equipe do '
+               'projeto Congresso em Números. \n\nOs dados foram coletados da API da Câmara '
+               'dos Deputados, tratados e disponibilizados nos gráficos abaixo, que podem '
+               'ser selecionados e filtrados por órgão, tempo, dentre outros.',
+                   style={'color': 'dimgray'})
+            ])
+    ], className='ten columns offset-by-one'),
 
     html.Div([
         html.Hr()
@@ -77,28 +94,27 @@ app.layout = html.Div([
                     labelStyle={'display': 'inline-block'}
             )
         ],
-                className='twelve columns offset-by-one'
+                className='ten columns offset-by-one'
         ),
     ]
     ),
 
     # filters
     html.Div(id='menu',
-             className='ten columns offset-by-one'
+             className='twelve columns'
              ),
 
     html.Div([
         html.Br()
     ], className='twelve columns'),
 
-    # graphs comparisson
+    # graphs comparison
     html.Div(
             id='output-container',
             className='twelve columns'
 
     ),
-]
-)
+])
 
 
 # General Functions
@@ -176,7 +192,7 @@ def display_controls(back_name):
 
     space = html.Div([
         html.Br()
-    ], className='twelve columns offset-by-one')
+    ], className='ten columns offset-by-one')
 
     info = html.Div(
             [html.Div(
