@@ -28,19 +28,19 @@ with dozens of interactions.
 It is all built on Docker. This means that it is super easy to make it
 run.
 
--First, you have to install [Docker in the machine that you want to
+- First, you have to install [Docker in the machine that you want to
 run](https://www.docker.com/get-docker)
 
-- Clone this repo and build the the Docker image. It can take a while.
-`docker build -t dash-plotly .`
+- Clone this repo and build the Docker image with 
+`sudo docker build -t dash-plotly .`
 
 - Initialize the container:
-`docker run -it  -v  $(pwd):/app -p 5000:5000 --name dash-server dash-plotly`
+`sudo docker run -it  -v  $(pwd):/app -p 5000:5000 --name dash-server dash-plotly`
 
 - Your viz good to go at `localhost:5000`
 
-It is possible to edit the viz without reinitializing the server. Just
-edit, save and refresh!
+**It is possible to edit the viz without reinitializing the server. Just
+edit, save and refresh!**
 
 ## How to add a plot
 
