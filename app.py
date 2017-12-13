@@ -54,7 +54,7 @@ app.layout = html.Div([
                        'font-family': 'Lato',
                        'font-size': '42px',
                        'padding-top': 20,
-                       'margin':'0px'
+                       'margin': '0px'
                        }),
 
         html.P('DATA FOR GOOD - CONGRESSO EM NÚMEROS',
@@ -75,57 +75,51 @@ app.layout = html.Div([
     ),
 
     html.Div([
-        html.Div([
-            html.Br(),
-            html.P('Este painel é uma ferramenta de visualização '
-                   'de dados da Câmara dos Deputados, elaborada pela equipe do '
-                   'projeto Congresso em Números. \n\nOs dados foram coletados da API da Câmara '
-                   'dos Deputados, tratados e disponibilizados nos gráficos abaixo, que podem '
-                   'ser selecionados e filtrados por órgão, tempo, dentre outros.',
-                   style={'color': 'dimgray'})
-        ])
-    ], className='ten columns offset-by-one'),
-
-    html.Div([
+        html.Br(),
+        html.P('Este painel é uma ferramenta de visualização '
+               'de dados da Câmara dos Deputados, elaborada pela equipe do '
+               'projeto Congresso em Números. \n\nOs dados foram coletados da API da Câmara '
+               'dos Deputados, tratados e disponibilizados nos gráficos abaixo, que podem '
+               'ser selecionados e filtrados por órgão, tempo, dentre outros.',
+               style={'color': '#696969',
+                      'text-align': 'justify'}),
         html.Hr()
-    ], className='ten columns offset-by-one'),
+    ],
+        style=dict(width= '95%', margin= '0 auto')
+    ),
 
     # graph selection
     html.Div([
 
-        html.Div([
-
-            html.P('Selecione o gráfico a ser mostrado:'),
-            dcc.RadioItems(
-
-                id='graph-selector',
-                options=[{'label': option['full_name'],
-                          'value': option['back_name']}
-                         for option in options_properties],
-                value=options_properties[0]['back_name'],
-                labelStyle={'display': 'inline-block'}
-            )
-        ],
-            className='ten columns offset-by-one'
-        ),
-    ]
+        html.P('Selecione o gráfico a ser mostrado:'),
+        #dcc.RadioItems(
+        #
+        #    id='graph-selector',
+        #    options=[{'label': option['full_name'],
+        #              'value': option['back_name']}
+        #             for option in options_properties],
+        #    value=options_properties[0]['back_name'],
+        #    labelStyle={'display': 'inline-block'}
+        #)
+        dcc.Tabs(
+            tabs=[dict(label=option['full_name'], value=option['back_name'])
+                  for option in options_properties],
+            value=options_properties[0]['back_name'],
+            id='graph-selector'
+        )
+    ],
+        style=dict(width= '95%', margin= '0 auto')
     ),
 
     # filters
-    html.Div(id='menu',
-             className='twelve columns'
-             ),
-
     html.Div([
-        html.Br()
-    ], className='twelve columns'),
-
-    # graphs comparison
-    html.Div(
-        id='output-container',
-        className='twelve columns'
-
-    ),
+        html.Div(id='menu'),
+        html.Br(),
+        html.Br(),
+        html.Div(id='output-container')  # graphs comparison
+    ],
+        style={'width': '95%', 'margin': '0 auto'}
+    )
 ])
 
 
@@ -165,12 +159,11 @@ def update_menu(back_name):
                 i = 0
                 for variables in opt['variables']:
 
-                    menu_header = html.H3(opt['full_name'] + ' ' + str(column + 1))
                     menu_title = html.P('Selecione um(a) {}'.format(variables['menu_text']))
 
                     if i == 0:
-                        container.append(html.Div([html.Br(), html.Hr(), menu_header, menu_title],
-                                                  className='ten columns offset-by-one'))
+                        container.append(html.Div([html.Br(), menu_title],
+                                                   className='ten columns offset-by-one'))
                     else:
                         container.append(html.Div([html.Br(), menu_title], className='ten columns offset-by-one'))
 
@@ -186,7 +179,7 @@ def update_menu(back_name):
 
                     container.append(components[variables['type']].component(kwargs=kwargs))
 
-                menus.append(html.Div(container, className='six columns'))
+                menus.append(html.Div(container, className='six columns',style={'padding-bottom':20}))
 
     return menus
 
@@ -255,7 +248,7 @@ def generate_output_callback_info(back_name):
 
 
 # Set callbacks from menu
-for back_name in [o['value'] for o in app.layout['graph-selector'].options]:
+for back_name in [o['value'] for o in app.layout['graph-selector'].tabs]:
 
     for column in range(columns):
         callback_input = []

@@ -8,7 +8,7 @@ WORKDIR /app
 RUN pip3 install dash==0.19.0
 RUN pip3 install dash-renderer==0.11.1
 RUN pip3 install dash-html-components==0.8.0
-RUN pip3 install dash-core-components==0.14.0
+RUN pip3 install dash-core-components==0.13.0-rc8
 RUN pip3 install plotly
 RUN pip3 install gunicorn
 RUN pip3 install pandas
