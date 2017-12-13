@@ -5,7 +5,6 @@ import dash_html_components as html
 import flask
 from dash.dependencies import Input, Output
 import yaml
-import base64
 
 import glob
 from collections import defaultdict
