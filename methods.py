@@ -1,5 +1,6 @@
 import pandas as pd
 import dash_html_components as html
+import base64
 
 
 #  Methods to fill components
@@ -40,9 +41,25 @@ def wrap_infos(infos: dict) -> object:
 
     try:
         for info in infos:
-            wrap.append(html.H5('{name}{value}'.format(name=info['name'],
-                                                       value=info['value'])))
+            wrap.append(html.P([info['name'],html.B(info['value'])],
+                               style={'color': '#696969',
+                                      'text-align': 'left',
+                                      'padding-left': 80
+                                      }
+                               ))
     except TypeError:
         print('No info given')
 
     return wrap
+
+def html_img(image_path,style={}):
+    """
+    Insert a image based on the path of file (with filename included).
+
+    :param path: str -- image path
+    :return: html.Img object
+    """
+    encoded_image = base64.b64encode(open(image_path, 'rb').read()).decode()
+
+    return html.Img(src='data:image/png;base64,{}'.format(encoded_image),
+                    style=style)

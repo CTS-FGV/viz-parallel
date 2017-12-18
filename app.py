@@ -10,9 +10,10 @@ import glob
 from collections import defaultdict
 # noinspection PyDeprecation
 import imp
+import os
 
 from components import components
-from methods import wrap_infos
+from methods import wrap_infos, html_img
 
 #  CONFIG APP
 server = flask.Flask(__name__)
@@ -53,24 +54,25 @@ app.layout = html.Div([
                        'color': 'white',
                        'font-family': 'Lato',
                        'font-size': '42px',
-                       'padding-top': 20,
+                       'padding-top': 60,
                        'margin': '0px'
                        }),
 
         html.P('DATA FOR GOOD - CONGRESSO EM NÚMEROS',
                style={'color': '#F2F2F2',
+                      'font-family': 'Lato',
                       'text-align': 'center',
                       'font-weight': 'bold'
                       # 'position':'relative'
                       }
                )
     ],
-        className='row',
         style={'background': 'teal',
-               'height': 120,
+               'height': 200,
                'margin-top': -10,
                'margin-left': -10,
-               'margin-right': -10
+               'margin-right': -10,
+               'background-image': "url('https://raw.githubusercontent.com/CTS-FGV/viz-parallel/master/images/header-image.png')"
                }
     ),
 
@@ -85,14 +87,14 @@ app.layout = html.Div([
                       'text-align': 'justify'}),
         html.Hr()
     ],
-        style=dict(width= '95%', margin= '0 auto')
+        style=dict(width='95%', margin='0 auto')
     ),
 
     # graph selection
     html.Div([
 
         html.P('Selecione o gráfico a ser mostrado:'),
-        #dcc.RadioItems(
+        # dcc.RadioItems(
         #
         #    id='graph-selector',
         #    options=[{'label': option['full_name'],
@@ -100,7 +102,7 @@ app.layout = html.Div([
         #             for option in options_properties],
         #    value=options_properties[0]['back_name'],
         #    labelStyle={'display': 'inline-block'}
-        #)
+        # )
         dcc.Tabs(
             tabs=[dict(label=option['full_name'], value=option['back_name'])
                   for option in options_properties],
@@ -108,7 +110,7 @@ app.layout = html.Div([
             id='graph-selector'
         )
     ],
-        style=dict(width= '95%', margin= '0 auto')
+        style=dict(width='95%', margin='0 auto')
     ),
 
     # filters
@@ -118,7 +120,82 @@ app.layout = html.Div([
         html.Br(),
         html.Div(id='output-container')  # graphs comparison
     ],
-        style={'width': '95%', 'margin': '0 auto'}
+        style={'width': '95%', 'margin': '0 auto', 'height': 800}
+    ),
+    html.Br(style=dict(width='95%', margin='0 auto', heigth=800)),
+
+    # footer
+    html.Div([
+        html.Table(
+            html.Tr([
+                # Logo CTS
+                html.Td(
+                    html.A(
+                        html_img('images/logo-cts-branco.png',
+                                 style={
+                                     'width': '300px',
+                                     'padding-left': '10%'
+                                 }
+                                 ),
+                        href="http://cts.direitorio.fgv.br/",
+                        target="_blank"
+                    ),
+                    style={'padding': 0, 'border': 'none'}
+                ),
+                html.Td(
+                    html.P([
+                        'Desenvolvido por CTS | v0.1 | 2017'
+                    ],
+                        style={
+                            'align': 'center',
+                            'color': '#F2F2F2',
+                            'font-family': 'Lato',
+                            'text-align': 'center',
+                            'font-weight': 'bold'
+                        }
+                    ),
+                    style={'padding': 0, 'border': 'none'}
+                ),
+                html.Td([
+                    # Github link
+                    html.A(
+                        html_img('images/icone-github-branco.png',
+                                 style={
+                                     'width': '45px',
+                                     'padding-right': '5%'
+                                 }
+                                 ),
+                        href="https://github.com/CTS-FGV",
+                        target="_blank"
+                    ),
+                    # Facebook link
+                    html.A(
+                        html_img('images/icone-facebook-branco.png',
+                                 style={
+                                     'width': '45px',
+                                     'padding-right': '15%'
+                                 }
+                                 ),
+                        href="https://www.facebook.com/ctsfgv",
+                        target="_blank"
+                    )
+
+                ],
+                    style={'padding': 0, 'border': 'none', 'text-align': 'right'}
+                )
+
+            ]),
+            style={'width': '100%', 'height': '120', 'table-layout': 'fixed'}
+        )
+
+    ],
+        style={
+            'background': 'teal',
+            'height': 120,
+            'margin-top': -10,
+            'margin-left': -10,
+            'margin-right': -10
+        }
     )
 ])
 
@@ -163,7 +240,7 @@ def update_menu(back_name):
 
                     if i == 0:
                         container.append(html.Div([html.Br(), menu_title],
-                                                   className='ten columns offset-by-one'))
+                                                  className='ten columns offset-by-one'))
                     else:
                         container.append(html.Div([html.Br(), menu_title], className='ten columns offset-by-one'))
 
@@ -179,7 +256,7 @@ def update_menu(back_name):
 
                     container.append(components[variables['type']].component(kwargs=kwargs))
 
-                menus.append(html.Div(container, className='six columns',style={'padding-bottom':20}))
+                menus.append(html.Div(container, className='six columns', style={'padding-bottom': 20}))
 
     return menus
 
@@ -275,7 +352,25 @@ for back_name in [o['value'] for o in app.layout['graph-selector'].tabs]:
         )
 
 # Append css
-app.css.append_css({"external_url": "https://codepen.io/JoaoCarabetta/pen/RjzpPB.css"})
+# app.css.append_css({"external_url": "https://codepen.io/JoaoCarabetta/pen/RjzpPB.css"})
+css_directory = os.getcwd()
+stylesheets = ['stylesheet.css']
+static_css_route = '/static/'
+
+
+@app.server.route('{}<stylesheet>'.format(static_css_route))
+def serve_stylesheet(stylesheet):
+    if stylesheet not in stylesheets:
+        raise Exception(
+            '"{}" is excluded from the allowed static files'.format(
+                stylesheet
+            )
+        )
+    return flask.send_from_directory(css_directory, stylesheet)
+
+
+for stylesheet in stylesheets:
+    app.css.append_css({"external_url": "/static/{}".format(stylesheet)})
 
 if __name__ == '__main__':
     app.run_server()
