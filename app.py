@@ -352,25 +352,7 @@ for back_name in [o['value'] for o in app.layout['graph-selector'].tabs]:
         )
 
 # Append css
-# app.css.append_css({"external_url": "https://codepen.io/JoaoCarabetta/pen/RjzpPB.css"})
-css_directory = os.getcwd()
-stylesheets = ['stylesheet.css']
-static_css_route = '/static/'
-
-
-@app.server.route('{}<stylesheet>'.format(static_css_route))
-def serve_stylesheet(stylesheet):
-    if stylesheet not in stylesheets:
-        raise Exception(
-            '"{}" is excluded from the allowed static files'.format(
-                stylesheet
-            )
-        )
-    return flask.send_from_directory(css_directory, stylesheet)
-
-
-for stylesheet in stylesheets:
-    app.css.append_css({"external_url": "/static/{}".format(stylesheet)})
+app.css.append_css({"external_url": "https://codepen.io/JoaoCarabetta/pen/RjzpPB.css"})
 
 if __name__ == '__main__':
     app.run_server()
