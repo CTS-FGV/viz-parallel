@@ -3,7 +3,7 @@ import plotly.graph_objs as go
 
 
 # Do not change this function name and inputs
-def plot(callback_input: dict, raw_data: pd.DataFrame, filtered_data: pd.DataFrame) -> object:
+def plot(callback_input: dict, raw_data: pd.DataFrame, filtered_data: pd.DataFrame, colors: list) -> object:
     """
     This function have to be responsible on transforming raw and rude data on beautiful plots.
     You can filter the data by yourself or use the filtered data DataFrame to plot.
@@ -18,6 +18,7 @@ def plot(callback_input: dict, raw_data: pd.DataFrame, filtered_data: pd.DataFra
     :param callback_input: Filters
     :param raw_data: Raw data
     :param filtered_data: Already filtered data
+    :param colors: Colorscale
     :return: Plotly Figure
     """
 

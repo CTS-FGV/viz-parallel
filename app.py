@@ -15,7 +15,7 @@ import os
 from components import components
 from methods import wrap_infos, html_img
 
-#  CONFIG APP
+# CONFIG APP
 server = flask.Flask(__name__)
 app = dash.Dash(name='app1', sharing=True, server=server, csrf_protect=False)
 
@@ -38,11 +38,12 @@ options_functions = add_functions('plots/*/infos.py', 'infos', options_functions
 options_functions = add_functions('plots/*/plot.py', 'plot', options_functions)
 options_functions = add_functions('plots/*/get_raw_data.py', 'raw_data', options_functions)
 
-# Set the number of columns
-columns = 2
-
 # Config needed to do complex callbacks
 app.config.supress_callback_exceptions = True
+
+# Style
+columns = 2
+colors = ['#caf1f7', '#93ecf9', '#76d2e0', '#51bccc', '#078699', '#0a5c68', '#04333a', '#001d21', '#001f23','#00090a', '#057f54', '#2DA37D']
 
 #  App Layout
 app.layout = html.Div([
@@ -194,7 +195,8 @@ app.layout = html.Div([
             'height': 120,
             'margin-top': -10,
             'margin-left': -10,
-            'margin-right': -10
+            'margin-right': -10,
+            'margin-bottom': -10
         }
     )
 ])
@@ -299,7 +301,8 @@ def generate_output_callback_graph(back_name):
 
         return options_functions[back_name]['plot'](inp,
                                                     options_functions[back_name]['raw_data'],
-                                                    filter_data(back_name, inp))
+                                                    filter_data(back_name, inp),
+                                                    colors)
 
     return return_graph
 
