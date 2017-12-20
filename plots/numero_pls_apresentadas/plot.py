@@ -3,8 +3,8 @@ import plotly.graph_objs as go
 from plots.numero_pls_apresentadas.get_raw_data import output
 import imp
 
+def draw_plot_1(input, raw_data, filtered_data, colors):
 
-def draw_plot_1(input, raw_data, filtered_data):
     periodo = input['tempo-numero']
 
     # raw_data['dataInicio'] = pd.to_datetime(raw_data['dataInicio'])
@@ -25,14 +25,14 @@ def draw_plot_1(input, raw_data, filtered_data):
             hoverinfo='text',
             name='Ano',
             marker=dict(
-                    color='#2DA37D'
+                    color=colors[11]
             ),
             showlegend=False
     )
     ]
 
     layout = go.Layout(
-            xaxis=dict(title='Anos'),
+            xaxis=dict(title='Ano'),
             yaxis=dict(title='Número de PLs')
     )
 

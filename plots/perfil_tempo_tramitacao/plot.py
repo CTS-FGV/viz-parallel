@@ -8,12 +8,10 @@ raw_data = imp.load_source('info', 'plots/perfil_tempo_tramitacao/get_raw_data.p
 org = ['Administrativa', 'Comissões Temáticas', 'Temporárias',
        'Constituição e Justiça', 'Tributação e Finanças', 'Mesa', 'Plenário']
 
-hm_col = ['#caf1f7','#93ecf9','#76d2e0','#51bccc','#078699','#0a5c68','#04333a','#001d21','#001f23','#00090a']
-
 bins = np.linspace(0, 300, 31)
 
 
-def plot(input, raw_data, filtered_data):
+def plot(input, raw_data, filtered_data, colors):
     status = input['situacao-perfil']
     periodo = input['tempo-perfil']
 
@@ -24,20 +22,20 @@ def plot(input, raw_data, filtered_data):
     z = temp.values.T
     #zmax = round(z[:-1].max())
 
-    return draw_plot(x, y, z)
+    return draw_plot(x, y, z, colors)
 
 
-def draw_plot(x, y, z):
+def draw_plot(x, y, z, colors):
 
     #colorscale
     max = 8
     # max = int(zmax / 10)
 
-    colorscale = [[0, hm_col[0]]]
+    colorscale = [[0, colors[0]]]
 
     for i in range(0, max):
-        colorscale.append([i / max, hm_col[i]])
-        colorscale.append([(i + 1) / max, hm_col[i]])
+        colorscale.append([i / max, colors[i]])
+        colorscale.append([(i + 1) / max, colors[i]])
 
     #hovertext
     hovertext = list()
