@@ -22,11 +22,11 @@ def infos(callback_input: dict, raw_data: pd.DataFrame, filtered_data: pd.DataFr
     :return: list of dicts
     """
 
-    mean = {'name': 'Média: ', 'value': round(filtered_data['numero_pls'].mean(), 2)}
+    mean = {'name': 'Média: ', 'value': round(filtered_data['index'].mean(), 2)}
 
-    median = {'name': 'Mediana: ', 'value': round(filtered_data['numero_pls'].median(), 2)}
+    median = {'name': 'Mediana: ', 'value': round(filtered_data['index'].median(), 2)}
 
-    propositions = {'name': 'Proposições: ', 'value': filtered_data['numero_pls'].sum()}
+    propositions = {'name': 'Proposições: ', 'value': filtered_data['index'].sum()}
 
     return [mean, median, propositions]
 
