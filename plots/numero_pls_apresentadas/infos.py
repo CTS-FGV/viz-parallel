@@ -21,7 +21,6 @@ def infos(callback_input: dict, raw_data: pd.DataFrame, filtered_data: pd.DataFr
     :param callback_input:
     :return: list of dicts
     """
-    print(filtered_data.info())
 
     mean = {'name': 'Média: ', 'value': round(filtered_data['index'].mean(), 2)}
 
